@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { asyncRouterMap } from '@router'
+import { asyncRouterMap, noAuthRouter } from '@router'
 
 const MockServerRoute = [
   {
@@ -30,6 +30,7 @@ export const authStore = defineStore('auth', {
       return new Promise(resolve => {
         // 应该请求server数据
         let accessedRouters = routerFilter(asyncRouterMap, MockServerRoute)
+        accessedRouters.push(noAuthRouter);
         this.routes = accessedRouters
         resolve()
       });
