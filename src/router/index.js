@@ -2,6 +2,10 @@ import { createRouter, createWebHistory } from "vue-router";
 
 export const constantRouterMap = [
   {
+    path: "",
+    redirect: "/userList"
+  },
+  {
     path: '/login',
     name: 'login',
     component: () => import('@pages/login/index.vue')
@@ -26,12 +30,10 @@ export const asyncRouterMap = [
   }
 ];
 
-export const noAuthRouter = {
-  path: '/:pathMatch(.*)*',
-  redirect: '/noAuth'
-}
+export const noAuthRouter = { path: '/:pathMatch(.*)*', redirect: '/noAuth' }
 
 export default createRouter({
+  scrollBehavior: () => ({ top: 0 }),
   history: createWebHistory(),
   routes: constantRouterMap
 })
