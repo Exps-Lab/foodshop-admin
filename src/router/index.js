@@ -9,7 +9,7 @@ export const constantRouterMap = [
   {
     path: "/noAuth",
     name: 'noAuthPage',
-    component: () => import("@pages/noAuthPage/index.vue")
+    component: () => import("@pages/noAuth/index.vue")
   }
 ];
 
@@ -25,6 +25,11 @@ export const asyncRouterMap = [
     component: () => import('@pages/addMenu/index.vue')
   }
 ];
+
+export const noAuthRouter = {
+  path: '/:pathMatch(.*)*',
+  redirect: '/noAuth'
+}
 
 export default createRouter({
   history: createWebHistory(),
