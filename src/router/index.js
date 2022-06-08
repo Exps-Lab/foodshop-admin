@@ -1,9 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
+import Layout from "../pages/layout/Layout.vue";
 
 export const constantRouterMap = [
   {
-    path: "",
-    redirect: "/userList"
+    path: "/",
+    component: Layout,
+    redirect: "/userList/index"
   },
   {
     path: '/login',
@@ -12,25 +14,41 @@ export const constantRouterMap = [
   },
   {
     path: "/noAuth",
-    name: 'noAuthPage',
-    component: () => import("@pages/noAuth/index.vue")
+    name: 'noAuth',
+    component: Layout,
+    children: [
+      {
+        path: "index",
+        component: () => import("@pages/noAuth/index.vue")
+      }
+    ]
   }
 ];
 
 export const asyncRouterMap = [
   {
-    path: '/userList',
-    name: 'userList',
-    component: () => import('@pages/userList/index.vue')
+    path: "/userList",
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@pages/userList/index.vue')
+      }
+    ]
   },
   {
-    path: '/addMenu',
-    name: 'addMenu',
-    component: () => import('@pages/addMenu/index.vue')
+    path: "/addMenu",
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@pages/addMenu/index.vue')
+      }
+    ]
   }
 ];
 
-export const noAuthRouter = { path: '/:pathMatch(.*)*', redirect: '/noAuth' }
+export const noAuthRouter = { path: '/:pathMatch(.*)*', redirect: '/noAuth/index' }
 
 export default createRouter({
   scrollBehavior: () => ({ top: 0 }),
