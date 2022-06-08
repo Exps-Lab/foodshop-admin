@@ -35,15 +35,27 @@ function routerFilter (feRouter, ServerRouter, res) {
 export const authStore = defineStore('auth', {
   state: () => ({
     routes: [],
+    menus: []
   }),
   actions: {
     generateRoutes() {
       return new Promise(resolve => {
         // 应该请求server数据
+        const res = {
+          data: {
+            list: [
+              {
+                url: '/userList/index',
+                label: '用户列表',
+                icon: 'app'
+              }
+            ]
+          }
+        }
+        let apiRoutes = res.data.list;
         let accessedRouters = routerFilter(asyncRouterMap, MockServerRoute, [])
-        accessedRouters.push(noAuthRouter)
-
-        this.routes = [...constantRouterMap, ...accessedRouters]
+        this.routes = [...accessedRouters, noAuthRouter]
+        this.menus = apiRoutes
         resolve()
       });
     }
