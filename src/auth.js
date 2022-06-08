@@ -19,7 +19,8 @@ function accessControl (router) {
     if (true) {
     // if (getToken()) {
       if (to.path === "/login") {
-        next("/");
+        next();
+        // next("/login");
       } else {
         dealUsrAuth(to, from, next, router);
       }

@@ -22,7 +22,7 @@ export default defineConfig({
     port: 8888,
     open: true,
     proxy: {
-      '/test': {
+      '/admin': {
         target: 'http://127.0.0.1:3000',
         changeOrigin: true
       },
