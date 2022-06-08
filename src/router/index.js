@@ -21,7 +21,12 @@ export const asyncRouterMap = [
   {
     path: '/userList',
     name: 'userList',
-    component: () => import('@pages/userList/index.vue')
+    component: () => import('@pages/userList/index.vue'),
+    children: [{
+      path: 'index',
+      name: 'index',
+      component: () => import('@pages/userList/index.vue'),
+    }]
   },
   {
     path: '/addMenu',
