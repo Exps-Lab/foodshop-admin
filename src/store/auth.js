@@ -9,7 +9,8 @@ const MockServerRoute = [
     }]
   },
   {
-    path: '/addMenu'
+    path: '/addMenu/index',
+    children: []
   }
 ]
 
@@ -20,13 +21,22 @@ function routerFilter (feRouter, ServerRouter, res) {
         if (!serverItem.children || !serverItem.children.length) {
           res.push(feItem)
         } else {
-          const { children, ...data} = feItem
+          const { children, ...data } = feItem
           const tempData = { ...data }
           tempData.children = routerFilter(feItem.children, serverItem.children, [])
           res.push(tempData)
         }
         break
-      }
+      } else if (serverItem.path.includes(feItem.path)) {
+        const fakeChildPath = [{
+          path: serverItem.path.slice(feItem.path.length + 1)
+        }]
+        const { path, ...data } = feItem
+        const tempData = { ...data, path: feItem.path }
+        tempData.children = routerFilter(feItem.children, fakeChildPath, [])
+        res.push(tempData)
+        break
+      } else {}
     }
   }
   return res

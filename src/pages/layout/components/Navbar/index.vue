@@ -35,7 +35,7 @@
     border-radius: 0 !important;
     padding-right: 24px;
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     align-items: center;
     color: black;
     background-color: #FFF;
@@ -68,7 +68,7 @@
       }
     }
   }
-  
+
   :deep(.arco-btn-text) {
     font-size: 16px;
     color:#4E5969;

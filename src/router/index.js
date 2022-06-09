@@ -45,6 +45,16 @@ export const asyncRouterMap = [
         component: () => import('@pages/addMenu/index.vue')
       }
     ]
+  },
+  {
+    path: "/addShop",
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@pages/addShop/index.vue')
+      }
+    ]
   }
 ];
 
