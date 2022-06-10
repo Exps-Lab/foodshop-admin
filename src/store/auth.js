@@ -14,16 +14,20 @@ const MockServerRoute = [
   }
 ]
 
-function routerFilter (feRouter, ServerRouter, res) {
+function routerFilter (feRouter, ServerRouter, res, fPath) {
   for (const serverItem of ServerRouter) {
     for (const feItem of feRouter) {
       if (serverItem.path === feItem.path) {
         if (!serverItem.children || !serverItem.children.length) {
-          res.push(feItem)
+          const { path, ...data } = feItem
+          res.push({
+            path: fPath ? fPath + '/' + path : path,
+            ...data
+          })
         } else {
           const { children, ...data } = feItem
           const tempData = { ...data }
-          tempData.children = routerFilter(feItem.children, serverItem.children, [])
+          tempData.children = routerFilter(feItem.children, serverItem.children, [], feItem.path)
           res.push(tempData)
         }
         break
