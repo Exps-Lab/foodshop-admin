@@ -49,9 +49,11 @@
 
 <script setup>
   import { reactive } from 'vue';
+  import { useRouter } from "vue-router"
   import { userStore } from '@store/user'
   import { Message } from '@arco-design/web-vue';
 
+  const router = useRouter()
   const store = userStore()
   const userInfo = reactive({
     username: '',
@@ -64,6 +66,7 @@
         .then(res => {
           // 跳转到dashboard页
           Message.success('登录成功！')
+          router.push('/')
         })
         .catch(err => {
           Message.error(err?.data?.msg || err.message)
@@ -80,15 +83,17 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    background-color: #FFF;
     .title {
       font-size: 36px;
-      margin-top: -36px;
+      margin-bottom: 36px;
     }
     .login-form {
       width: 400px;
     }
     .tips {
       font-size: 13px;
+      margin-top: 16px;
       color: rgba(255, 0, 0, 0.8);
     }
   }

@@ -1,36 +1,34 @@
 <template>
-  <div class="menu-demo">
+  <div class="sidebar">
     <a-menu
       :style="{ width: '200px', height: '100%' }"
-      :default-open-keys="['0']"
-      :default-selected-keys="['0_2']"
+      :default-selected-keys="[path]"
+      auto-open-selected
       show-collapse-button
       breakpoint="xl"
       @collapse="onCollapse"
     >
-      <a-menu-item v-for="route in list" :key="route.label+route.url">
-        <icon-bug></icon-bug>{{ route.label }}
-      </a-menu-item>
-      <!-- <a-menu-item key="1">
-        <icon-apps></icon-apps>Menu 1
-      </a-menu-item>
-      <a-menu-item key="2">
-        <icon-bug></icon-bug>Menu 2
-      </a-menu-item> -->
+      <item v-for="route in list" :key="route.label + route.path" :route="route"></item>
     </a-menu>
   </div>
 </template>
 
 <script setup>
-const props = defineProps({
-  list: Array
-})
-const { list } = props
-const onCollapse = (val, type) => {}
+  import { computed } from "vue"
+  import { useRouter } from "vue-router"
+  import Item from './Item.vue'
+
+  const props = defineProps({
+    list: Array
+  })
+  const router = useRouter()
+  const { list } = props
+  let path = computed(() => router.currentRoute.value.path)
+  const onCollapse = (val, type) => {}
 </script>
 
-<style>
-.menu-demo {
+<style lang="less" scoped>
+.sidebar {
   height: 100%;
   background-color: #FFF;
   z-index: 1001;

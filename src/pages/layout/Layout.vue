@@ -1,20 +1,19 @@
 <template>
   <div class="app-wrapper">
-    <!-- <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside"/> -->
-    <Sidebar class="sidebar-container" :list="menus"/>
+    <Sidebar :list="menus"/>
     <div class="main-container">
       <Navbar :user="userInfo"/>
-      <!-- <Breadcrumb/> -->
+      <Breadcrumb/>
       <AppMain/>
     </div>
   </div>
 </template>
 
 <script setup>
-  import { Navbar, Sidebar, AppMain } from './components'
-  import { authStore } from "@store/auth";
-  import { userStore } from "@store/user";
-  
+  import { Navbar, Sidebar, Breadcrumb, AppMain } from './components'
+  import { authStore } from '@store/auth'
+  import { userStore } from '@store/user'
+
   const { menus } = authStore()
   const { userInfo } = userStore()
 </script>

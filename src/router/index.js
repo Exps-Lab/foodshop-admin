@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Layout from "../pages/layout/Layout.vue";
+import { markRaw } from 'vue'
+import LayoutComponent from "../pages/layout/Layout.vue";
+const Layout = markRaw(LayoutComponent)
 
 export const constantRouterMap = [
   {
@@ -29,10 +31,15 @@ export const asyncRouterMap = [
   {
     path: '/userList',
     component: Layout,
-    name: 'userList',
+    meta: {
+      title: '用户管理'
+    },
     children: [{
       path: 'index',
       name: 'index',
+      meta: {
+        title: '用户列表'
+      },
       component: () => import('@pages/userList/index.vue'),
     }]
   },
@@ -42,6 +49,9 @@ export const asyncRouterMap = [
     children: [
       {
         path: 'index',
+        meta: {
+          title: '添加菜单'
+        },
         component: () => import('@pages/addMenu/index.vue')
       }
     ]
@@ -52,6 +62,9 @@ export const asyncRouterMap = [
     children: [
       {
         path: 'index',
+        meta: {
+          title: '添加商铺'
+        },
         component: () => import('@pages/addShop/index.vue')
       }
     ]

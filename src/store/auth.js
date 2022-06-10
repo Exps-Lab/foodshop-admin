@@ -63,9 +63,20 @@ export const authStore = defineStore('auth', {
           data: {
             list: [
               {
-                url: '/userList/index',
-                label: '用户列表',
-                icon: 'app'
+                path: '/userList',
+                label: '用户管理',
+                icon: 'app',
+                children: [
+                  {
+                    path: '/userList/index',
+                    label: '用户列表'
+                  }
+                ]
+              },
+              {
+                path: '/addMenu/index',
+                label: '添加菜单',
+                icon: 'bug'
               }
             ]
           }
