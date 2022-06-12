@@ -1,11 +1,16 @@
 import { defineStore } from 'pinia'
 import { login, logout } from '@api/login'
+import { authStore } from '@store/auth'
+import { removeToken } from "@utils/login_token"
 
 export const userStore = defineStore('user', {
   state: () => ({
     userInfo: {},
   }),
   actions: {
+    resetUserInfo () {
+      this.userInfo = {}
+    },
     setUserInfo (info) {
       Object.keys(info).forEach(key => {
         this.userInfo[key] = info[key]
@@ -18,7 +23,6 @@ export const userStore = defineStore('user', {
           username,
           password: window.btoa(password)
         }).then((res) => {
-          console.log(res.data)
           const { role, role_name, c_time } = res.data
           this.setUserInfo({
             username,
@@ -33,7 +37,18 @@ export const userStore = defineStore('user', {
       })
     },
     logout () {
-
+      const _authStore = authStore()
+      return new Promise((resolve, reject) => {
+        logout()
+          .then((res) => {
+            this.resetUserInfo()
+            _authStore.resetRoutes()
+            removeToken()
+            resolve()
+          }).catch(err => {
+            reject(err)
+          })
+      })
     }
   }
 })

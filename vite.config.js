@@ -19,6 +19,7 @@ export default defineConfig({
   },
   css: cssConf,
   server: {
+    host: '0.0.0.0',
     port: 8888,
     open: true,
     proxy: {

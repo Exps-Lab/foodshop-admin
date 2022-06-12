@@ -16,8 +16,10 @@
 <script setup>
   import { userStore } from '@store/user'
   import { toRefs } from '@vue/reactivity'
+  import { useRouter } from 'vue-router'
 
   const store = userStore()
+  const router = useRouter()
   const props = defineProps({
     user: Object
   })
@@ -25,6 +27,9 @@
   const handleSelect = (type) => {
     if (type === 'logout') {
       store.logout()
+        .then(() => {
+          router.push('/login')
+        })
     }
   }
 </script>

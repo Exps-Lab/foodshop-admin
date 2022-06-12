@@ -1,6 +1,7 @@
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import routerInstance from '@router'
+import { getToken } from "@utils/login_token"
 import { authStore } from '@store/auth'
 
 accessControl(routerInstance)
@@ -11,16 +12,12 @@ function accessControl (router) {
   });
 
   const whiteList = ["/login"];
-
   router.beforeEach((to, from, next) => {
     NProgress.start();
 
-    // todo 暂时写死
-    if (true) {
-    // if (getToken()) {
+    if (getToken()) {
       if (to.path === "/login") {
-        next();
-        // next("/login");
+        next('/');
       } else {
         dealUsrAuth(to, from, next, router);
       }

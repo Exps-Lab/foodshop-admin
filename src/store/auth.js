@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { userStore } from '@store/user'
 import { asyncRouterMap, noAuthRouter } from '@router'
 
 const MockServerRoute = [
@@ -56,7 +57,11 @@ export const authStore = defineStore('auth', {
     menus: []
   }),
   actions: {
+    resetRoutes () {
+      this.routes = []
+    },
     generateRoutes() {
+      const _userStore = userStore()
       return new Promise(resolve => {
         // 应该请求server数据
         const res = {
@@ -78,13 +83,20 @@ export const authStore = defineStore('auth', {
                 label: '添加菜单',
                 icon: 'bug'
               }
-            ]
+            ],
+            userInfo: {
+              "username": '写死的用户名',
+              "role" : 2,
+              "role_name" : "普通用户",
+              "c_time" : 1654857757527.0,
+            }
           }
         }
         let apiRoutes = res.data.list;
-        let accessedRouters = routerFilter(asyncRouterMap, MockServerRoute, [], 0)
+        let accessedRouters = routerFilter(asyncRouterMap, MockServerRoute, [])
         this.routes = [...accessedRouters, noAuthRouter]
         this.menus = apiRoutes
+        _userStore.setUserInfo(res.data.userInfo)
         resolve()
       });
     }
