@@ -15,8 +15,7 @@ const MockServerRoute = [
   }
 ]
 
-let walkLevel = 1
-function routerFilter (feRouter, ServerRouter, res) {
+function routerFilter (feRouter, ServerRouter, res, deepLevel) {
   for (const serverItem of ServerRouter) {
     for (const feItem of feRouter) {
       if (serverItem.path === feItem.path) {
@@ -25,13 +24,14 @@ function routerFilter (feRouter, ServerRouter, res) {
         } else {
           const { children, ...data } = feItem
           const tempData = { ...data }
-          walkLevel++
-          tempData.children = routerFilter(feItem.children, serverItem.children, [])
+          deepLevel++
+          tempData.children = routerFilter(feItem.children, serverItem.children, [], deepLevel)
+          deepLevel--
           res.push(tempData)
         }
         break
       } else if (serverItem.path.includes(feItem.path)) {
-        if (walkLevel > 1) {
+        if (deepLevel > 1) {
           res.push(feItem)
         } else {
           const fakeChildPath = [{
@@ -39,15 +39,15 @@ function routerFilter (feRouter, ServerRouter, res) {
           }]
           const { path, ...data } = feItem
           const tempData = { ...data, path: feItem.path }
-          walkLevel++
-          tempData.children = routerFilter(feItem.children, fakeChildPath, [])
+          deepLevel++
+          tempData.children = routerFilter(feItem.children, fakeChildPath, [], deepLevel)
+          deepLevel--
           res.push(tempData)
         }
         break
       } else {}
     }
   }
-  walkLevel--
   return res
 }
 
@@ -93,7 +93,7 @@ export const authStore = defineStore('auth', {
           }
         }
         let apiRoutes = res.data.list;
-        let accessedRouters = routerFilter(asyncRouterMap, MockServerRoute, [])
+        let accessedRouters = routerFilter(asyncRouterMap, MockServerRoute, [], 1)
         this.routes = [...accessedRouters, noAuthRouter]
         this.menus = apiRoutes
         _userStore.setUserInfo(res.data.userInfo)
