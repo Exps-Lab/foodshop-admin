@@ -2,7 +2,7 @@
   <div class="navbar">
     <a-dropdown position="br" @select="handleSelect">
       <a-button type="text">
-        <span class="user-name">{{ user.name || '未知' }}</span>
+        <span class="user-name">{{ user.username || '未知' }}</span>
         <icon-down class="icon" />
       </a-button>
       <template #content>
@@ -15,7 +15,6 @@
 
 <script setup>
   import { userStore } from '@store/user'
-  import { toRefs } from '@vue/reactivity'
   import { useRouter } from 'vue-router'
 
   const store = userStore()

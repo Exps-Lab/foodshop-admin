@@ -2,12 +2,12 @@
   <div class="menu-item">
     <router-link v-if="!hasChild" :to="route.path">
       <a-menu-item :key="route.path">
-        <icon-bug></icon-bug>{{ route.label }}
+        <component :is="`icon-${route.icon}`"></component>{{ route.label }}
       </a-menu-item>
     </router-link>
     <a-sub-menu v-else>
       <template #icon>
-        <icon-apps></icon-apps>
+        <component :is="`icon-${route.icon}`"></component>
       </template>
       <template #title>{{ route.label }}</template>
       <item v-for="child in route.children" :key="child.label + child.path" :route="child"></item>

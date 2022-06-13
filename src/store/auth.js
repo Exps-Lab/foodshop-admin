@@ -2,19 +2,6 @@ import { defineStore } from 'pinia'
 import { userStore } from '@store/user'
 import { asyncRouterMap, noAuthRouter } from '@router'
 
-const MockServerRoute = [
-  {
-    path: '/userList',
-    children: [{
-      path: '/userList/index',
-    }]
-  },
-  {
-    path: '/addMenu/index',
-    children: []
-  }
-]
-
 function routerFilter (feRouter, ServerRouter, res, deepLevel) {
   for (const serverItem of ServerRouter) {
     for (const feItem of feRouter) {
@@ -70,30 +57,31 @@ export const authStore = defineStore('auth', {
               {
                 path: '/userList',
                 label: '用户管理',
-                icon: 'app',
+                icon: 'apps',
                 children: [
                   {
                     path: '/userList/index',
-                    label: '用户列表'
+                    label: '用户列表',
+                    icon: 'bug'
                   }
                 ]
               },
               {
                 path: '/addMenu/index',
                 label: '添加菜单',
-                icon: 'bug'
+                icon: 'list'
               }
             ],
             userInfo: {
               "username": '写死的用户名',
               "role" : 2,
               "role_name" : "普通用户",
-              "c_time" : 1654857757527.0,
+              "c_time" : 1654857757527,
             }
           }
         }
-        let apiRoutes = res.data.list;
-        let accessedRouters = routerFilter(asyncRouterMap, MockServerRoute, [], 1)
+        let apiRoutes = res.data.list
+        let accessedRouters = routerFilter(asyncRouterMap, apiRoutes, [], 1)
         this.routes = [...accessedRouters, noAuthRouter]
         this.menus = apiRoutes
         _userStore.setUserInfo(res.data.userInfo)
