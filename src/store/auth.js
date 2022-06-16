@@ -67,9 +67,14 @@ export const authStore = defineStore('auth', {
                 ]
               },
               {
-                path: '/addMenu/index',
-                label: '添加菜单',
+                path: '/menu/index',
+                label: '菜单管理',
                 icon: 'list'
+              },
+              {
+                path: '/menu/detail',
+                label: '菜单详情',
+                icon: 'apps'
               }
             ],
             userInfo: {

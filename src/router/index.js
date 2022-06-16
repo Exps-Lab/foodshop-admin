@@ -34,25 +34,33 @@ export const asyncRouterMap = [
     meta: {
       title: '用户管理'
     },
-    children: [{
-      path: 'index',
-      name: 'index',
-      meta: {
-        title: '用户列表'
-      },
-      component: () => import('@pages/userList/index.vue'),
-    }]
+    children: [
+      {
+        path: 'index',
+        meta: {
+          title: '用户列表'
+        },
+        component: () => import('@pages/userList/index.vue'),
+      }
+    ]
   },
   {
-    path: "/addMenu",
+    path: "/menu",
     component: Layout,
     children: [
       {
         path: 'index',
         meta: {
+          title: '菜单列表'
+        },
+        component: () => import('@pages/menu/index.vue')
+      },
+      {
+        path: 'detail',
+        meta: {
           title: '添加菜单'
         },
-        component: () => import('@pages/addMenu/index.vue')
+        component: () => import('@pages/menu/detail.vue'),
       }
     ]
   },
