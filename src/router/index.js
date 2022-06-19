@@ -7,12 +7,25 @@ export const constantRouterMap = [
   {
     path: "/",
     component: Layout,
-    redirect: "/userList/index"
+    redirect: "/dashboard/index"
   },
   {
     path: '/login',
     name: 'login',
     component: () => import('@pages/login/index.vue')
+  },
+  {
+    path: "/dashboard",
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        meta: {
+          title: 'dashboard'
+        },
+        component: () => import('@pages/dashboard/index.vue')
+      }
+    ]
   },
   {
     path: "/noAuth",

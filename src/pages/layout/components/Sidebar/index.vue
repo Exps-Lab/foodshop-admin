@@ -1,6 +1,6 @@
 <template>
   <div class="sidebar">
-    <img :class="['logo', collapse ? 'only' : 'all']" :src="logoPath" alt="logo">
+    <img class="logo" :src="logoPath" alt="logo">
     <a-menu
       :style="{ width: '200px', height: '100%' }"
       :default-selected-keys="[path]"
@@ -43,17 +43,13 @@
   background-color: #FFF;
   z-index: 1001;
   :deep(.arco-menu) {
-    height: calc(100% - 91px) !important;
+    height: calc(100% - 50px) !important;
   }
   .logo {
+    height: 50px;
     margin-left: 50%;
     transform: translateX(-50%);
-    &.only {
-      width: 50px;
-    }
-    &.all {
-      width: 91px;
-    }
+    transition: width 0.2s cubic-bezier(0.34, 0.69, 0.1, 1);
   }
 }
 </style>
