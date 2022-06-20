@@ -5,6 +5,7 @@
     </section>
     <a-table :columns="columns" :data="state.data">
       <template #optional="{ record }">
+        <a-button type="text" @click="handleView(record)">查看</a-button>
         <a-button type="text" @click="handleEdit(record)">编辑</a-button>
         <a-button type="text" @click="handleDelete(record)">删除</a-button>
       </template>
@@ -53,10 +54,17 @@ const getList = () => {
     state.data = res.data
   })
 }
+const handleView = (row) => {
+  router.push(`/menu/detail?id=${row.id}&view=1`)
+}
 const handleEdit = (row) => {
-  router.push('/menu/detail?id=' + row.id)
+  router.push(`/menu/detail?id=${row.id}`)
 }
 const handleDelete = (row) => {
+  if (row.is_default) {
+    Message.warning('内置菜单不可删除！')
+    return
+  }
   Modal.confirm({
     title: '确认删除？',
     onOk: () => {

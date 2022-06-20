@@ -1,5 +1,5 @@
 <template>
-  <a-form :model="form" :style="{width:'600px'}" @submitSuccess="handleSubmit">
+  <a-form :model="form" :style="{width:'600px'}" @submitSuccess="handleSubmit" :disabled="isDisabled">
     <a-form-item field="label" label="菜单名称" :rules="[{required:true, message:'请输入菜单名称'}]">
       <a-input v-model="form.label" placeholder="请输入菜单名称" />
     </a-form-item>
@@ -38,7 +38,7 @@
       </a-form-item>
     </div>
     
-    <a-form-item>
+    <a-form-item v-if="!isDisabled">
       <a-button @click="handleCancel">取消</a-button>
       <a-button type="primary" html-type="submit">保存</a-button>
     </a-form-item>
@@ -53,6 +53,7 @@ import { getMenuDetail, addMenu, updateMenu, getRoleList } from '@api/menu/index
 
 const route = useRoute()
 const id = Number(route.query.id)
+const isDisabled = Boolean(route.query.view)
 let roleOptions = ref([])
 const form = reactive({
   path: '',
@@ -98,9 +99,7 @@ const handleCancel = async (data) => {
 }
 const init = () => {
   getRole()
-  if (id) {
-    getData()
-  }
+  id && getData()
 }
 
 init()
