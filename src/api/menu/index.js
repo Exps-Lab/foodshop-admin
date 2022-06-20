@@ -35,3 +35,10 @@ export function deleteMenu (data) {
     data
   })
 }
+export function getRoleList (params) {
+  return request({
+    url: '/admin/noauth/getRoleList',
+    method: 'get',
+    params
+  })
+}

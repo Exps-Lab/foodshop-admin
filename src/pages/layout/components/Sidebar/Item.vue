@@ -22,10 +22,7 @@ const props = defineProps({
   route: Object
 })
 const { route } = props
-const hasChild = computed(() => {
-  const children = JSON.parse(route.children || '[]')
-  return children.children
-})
+const hasChild = computed(() => route.children?.length > 0)
 </script>
 
 <style lang="less" scoped>

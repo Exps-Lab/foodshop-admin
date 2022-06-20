@@ -11,9 +11,11 @@
     </a-form-item>
     <a-form-item field="role" label="菜单权限">
       <a-select v-model="form.role" placeholder="请选择菜单权限">
-        <a-option :value="2">普通用户</a-option>
-        <a-option :value="1">管理员</a-option>
+        <a-option v-for="item in roleOptions" :key="item.role_id" :value="item.role">{{ item.role_name }}</a-option>
       </a-select>
+    </a-form-item>
+    <a-form-item field="icon" label="菜单栏是否隐藏">
+      <a-switch v-model="form.is_hidden" />
     </a-form-item>
     <a-form-item>
       <a-button @click="addChild">
@@ -44,18 +46,20 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { ref, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import { Message } from '@arco-design/web-vue'
-import { getMenuDetail, addMenu, updateMenu } from '@api/menu/index'
+import { getMenuDetail, addMenu, updateMenu, getRoleList } from '@api/menu/index'
 
 const route = useRoute()
 const id = Number(route.query.id)
+let roleOptions = ref([])
 const form = reactive({
   path: '',
   label: '',
   icon: '',
   role: 2,
+  is_hidden: false,
   children: []
 })
 const getData = () => {
@@ -63,6 +67,11 @@ const getData = () => {
     Object.keys(form).forEach(key => {
       form[key] = res.data[key]
     })
+  })
+}
+const getRole = () => {
+  getRoleList().then(res => {
+    roleOptions.value = res.data
   })
 }
 const addChild = () => {
@@ -87,9 +96,14 @@ const handleSubmit = async (data) => {
 const handleCancel = async (data) => {
   history.back()
 }
-if (id) {
-  getData()
+const init = () => {
+  getRole()
+  if (id) {
+    getData()
+  }
 }
+
+init()
 </script>
 
 <style scoped lang="less">

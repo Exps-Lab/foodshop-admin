@@ -7,25 +7,21 @@ export const constantRouterMap = [
   {
     path: "/",
     component: Layout,
-    redirect: "/dashboard/index"
+    redirect: "/dashboard",
+    children: [
+      {
+        path: 'dashboard',
+        meta: {
+          title: '首页'
+        },
+        component: () => import('@pages/dashboard/index.vue')
+      }
+    ]
   },
   {
     path: '/login',
     name: 'login',
     component: () => import('@pages/login/index.vue')
-  },
-  {
-    path: "/dashboard",
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        meta: {
-          title: 'dashboard'
-        },
-        component: () => import('@pages/dashboard/index.vue')
-      }
-    ]
   },
   {
     path: "/noAuth",
@@ -42,7 +38,7 @@ export const constantRouterMap = [
 
 export const asyncRouterMap = [
   {
-    path: '/userList',
+    path: '/user',
     component: Layout,
     meta: {
       title: '用户管理'
@@ -60,6 +56,9 @@ export const asyncRouterMap = [
   {
     path: "/menu",
     component: Layout,
+    meta: {
+      title: '菜单管理'
+    },
     children: [
       {
         path: 'index',
@@ -71,14 +70,14 @@ export const asyncRouterMap = [
       {
         path: 'detail',
         meta: {
-          title: '添加菜单'
+          title: '菜单配置'
         },
         component: () => import('@pages/menu/detail.vue'),
       }
     ]
   },
   {
-    path: "/addShop",
+    path: "/shop",
     component: Layout,
     children: [
       {

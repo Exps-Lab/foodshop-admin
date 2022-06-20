@@ -24,14 +24,13 @@
   })
   const router = useRouter()
   const { list } = props
-  let collapse = ref(false)
+  const collapse = ref(false)
 
-  let path = computed(() => router.currentRoute.value.path)
-  let logoPath = computed(() => {
+  const path = computed(() => router.currentRoute.value.path)
+  const logoPath = computed(() => {
     const url = collapse.value ? './imgs/logo-only.png' : './imgs/logo.png'
     return new URL(url, import.meta.url).href
   })
-
   const onCollapse = (val, type) => {
     collapse.value = val
   }
@@ -50,6 +49,7 @@
     margin-left: 50%;
     transform: translateX(-50%);
     transition: width 0.2s cubic-bezier(0.34, 0.69, 0.1, 1);
+    cursor: pointer;
   }
 }
 </style>

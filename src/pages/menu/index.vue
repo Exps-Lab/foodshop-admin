@@ -1,22 +1,15 @@
 <template>
-  <a-table :columns="columns" :data="state.data">
-    <template #columns>
-      <a-table-column title="菜单名称" data-index="label"></a-table-column>
-      <a-table-column title="菜单路径" data-index="path"></a-table-column>
-      <a-table-column title="图标名称" data-index="icon"></a-table-column>
-      <a-table-column title="菜单权限" data-index="role">
-        <template #cell="{ record }">
-          {{ record === 1 ? '管理员' : '普通用户' }}
-        </template>
-      </a-table-column>
-      <a-table-column title="操作">
-        <template #cell="{ record }">
-          <a-button type="text" @click="handleEdit(record)">编辑</a-button>
-          <a-button type="text" @click="handleDelete(record)">删除</a-button>
-        </template>
-      </a-table-column>
-    </template>
-  </a-table>
+  <div>
+    <section class="tool-bar">
+      <a-button type="primary" @click="handleAdd">新增</a-button>
+    </section>
+    <a-table :columns="columns" :data="state.data">
+      <template #optional="{ record }">
+        <a-button type="text" @click="handleEdit(record)">编辑</a-button>
+        <a-button type="text" @click="handleDelete(record)">删除</a-button>
+      </template>
+    </a-table>
+  </div>
 </template>
 
 <script setup>
@@ -41,8 +34,16 @@ const columns = [
   },
   {
     title: '菜单权限',
-    dataIndex: 'role',
+    dataIndex: 'role_name',
   },
+  {
+    title: '菜单栏是否隐藏',
+    dataIndex: 'is_hidden_text',
+  },
+  {
+    title: '操作',
+    slotName: 'optional'
+  }
 ]
 const state = reactive({
   data: []
@@ -64,8 +65,10 @@ const handleDelete = (row) => {
         getList()
       })
     }
-  });
-  
+  })
+}
+const handleAdd = () => {
+  router.push('/menu/detail')
 }
 getList()
 </script>

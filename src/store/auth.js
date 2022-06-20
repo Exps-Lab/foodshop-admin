@@ -55,7 +55,7 @@ export const authStore = defineStore('auth', {
           const { menuList: apiRoutes, userInfo } = res.data
           let accessedRouters = routerFilter(asyncRouterMap, apiRoutes, [], 1)
           this.routes = [...accessedRouters, noAuthRouter]
-          this.menus = apiRoutes
+          this.menus = apiRoutes.filter(menu => !menu.is_hidden)
           _userStore.setUserInfo(userInfo)
           resolve()
         })
