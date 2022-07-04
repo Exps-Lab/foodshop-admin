@@ -1,4 +1,6 @@
 import axios from "axios"
+import router from '@router'
+import { userStore } from '@store/user'
 
 let loading = false
 let requestCount = 0
@@ -45,17 +47,17 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     hideLoading()
+    const store = userStore()
     const res = response.data
     if (res.code !== 1) {
-      // 30004    "token格式错误"
-      // 30005    "token过期"
-      if ([30004, 30005].includes(res.code)) {
-        redirecturi = redirecturi || window.location.href
-        window.location.href = host + '/login.html?redirecturi=' + encodeURIComponent(redirecturi)
-      } else {
-        // TODO: 组件提示用户错误信息
-        return Promise.reject(response)
+      // 10002: illegal token
+      if ([10002].includes(res.code)) {
+        store.logout().then(() => {
+          router.push('/login')
+        })
       }
+      // TODO: 组件提示用户错误信息
+      return Promise.reject(response)
     } else {
       return response.data
     }
