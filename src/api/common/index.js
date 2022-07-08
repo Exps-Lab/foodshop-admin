@@ -6,3 +6,10 @@ export function getCommonInfo () {
     method: 'get'
   })
 }
+// 获取文件上传凭证token
+export function uploadToken () {
+  return request({
+    url: '/admin/noauth/uploadToken',
+    method: 'get'
+  })
+}
