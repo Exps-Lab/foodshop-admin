@@ -38,23 +38,19 @@
     <a-upload
       list-type="picture-card"
       image-preview
-      :custom-request="qiniuRequest"
       :default-file-list="fileList"
       :limit="limitNum"
       :accept="acceptType"
       :disabled="disabled"
+      :custom-request="qiniuRequest"
       :on-before-remove="handleRemove"
-      @change="onChange"
-      @progress="onProgress"
     />
   </a-space>
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from "vue"
+import { defineProps, defineEmits } from "vue"
 import axios from "axios"
-import IconEdit from '@arco-design/web-vue/es/icon/icon-edit'
-import IconPlus from '@arco-design/web-vue/es/icon/icon-plus'
 import { uploadToken } from '@api/common/index'
 
 const domain = 'https://upload-z1.qiniup.com'
@@ -78,10 +74,9 @@ const props = defineProps({
   },
 })
 const emits = defineEmits(['imgUploadFinish', 'removeImg'])
-const file = ref(props.fileList.length ? {url: props.fileList[0]} : null)
 
 const qiniuRequest = async (option) => {
-  const { onError, onSuccess, fileItem, name } = option
+  const { onProgress, onError, onSuccess, fileItem, name } = option
   const keyname = fileItem.name
   // 从后端获取上传凭证token
   const { data: token } = await uploadToken()
@@ -108,13 +103,6 @@ const qiniuRequest = async (option) => {
   } else {
     onError(res.msg)
   }
-}
-const onChange = (_, currentFile) => {
-  file.value = { ...currentFile }
-}
-const onProgress = (currentFile) => {
-  console.log('onProgress ===>', currentFile)
-  file.value = currentFile
 }
 const handleRemove = (file) => {
   emits('removeImg', file)
