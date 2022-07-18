@@ -77,13 +77,13 @@ export const asyncRouterMap = [
     ]
   },
   {
-    path: "/shop",
+    path: "/addShop",
     component: Layout,
     children: [
       {
         path: 'index',
         meta: {
-          title: '添加商铺'
+          title: '添加店铺'
         },
         component: () => import('@pages/addShop/index.vue')
       }

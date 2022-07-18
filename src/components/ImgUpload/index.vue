@@ -38,7 +38,7 @@
     <a-upload
       list-type="picture-card"
       image-preview
-      :default-file-list="fileList"
+      :file-list="fileList"
       :limit="limitNum"
       :accept="acceptType"
       :disabled="disabled"

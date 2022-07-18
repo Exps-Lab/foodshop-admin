@@ -11,17 +11,17 @@ const showLoading = () => {
   if (requestCount === 0 && !loading) {
     // TODO: 显示loading组件
     loading = true
-    console.log('Loading Start...', Date.now())
+    // console.log('Loading Start...', Date.now())
   }
   requestCount++
 }
 
 const hideLoading = () => {
   requestCount--
-  if (requestCount == 0) {
+  if (requestCount === 0) {
     // TODO: 隐藏loading组件
     loading = false
-    console.log('Loading End...', Date.now())
+    // console.log('Loading End...', Date.now())
   }
 }
 
