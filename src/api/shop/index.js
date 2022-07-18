@@ -7,6 +7,14 @@ export function getCategory () {
   })
 }
 
+export function shopList (params) {
+  return request({
+    url: '/admin/auth/shop/list',
+    method: 'get',
+    params
+  })
+}
+
 export function getDetail (params) {
   return request({
     url: '/admin/auth/shop/detail',
@@ -26,6 +34,14 @@ export function addShop (data) {
 export function updateShop (data) {
   return request({
     url: '/admin/auth/shop/update',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteShop (data) {
+  return request({
+    url: '/admin/auth/shop/delete',
     method: 'post',
     data
   })
