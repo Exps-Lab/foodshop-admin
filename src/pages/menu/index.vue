@@ -3,7 +3,7 @@
     <section class="tool-bar">
       <a-button type="primary" @click="handleAdd">新增</a-button>
     </section>
-    <a-table :columns="columns" :data="state.data">
+    <a-table :columns="columns" :data="state.data" :pagination="page" @page-change="pageChange">
       <template #optional="{ record }">
         <a-button type="text" @click="handleView(record)">查看</a-button>
         <a-button type="text" @click="handleEdit(record)">编辑</a-button>
@@ -49,9 +49,24 @@ const columns = [
 const state = reactive({
   data: []
 })
+const page = reactive({
+  pageNum: 1,
+  pageSize: 10,
+  total: 0
+})
 const getList = () => {
-  getMenuList().then(res => {
-    state.data = res.data
+  getMenuList({
+    pageNum: page.pageNum,
+    pageSize: page.pageSize
+  }).then(res => {
+    res.data.list.forEach(item => {
+      item.key = item.id
+      if (item.children?.length === 0) {
+        delete item.children
+      }
+    });
+    state.data = res.data.list
+    page.total = res.data.total
   })
 }
 const handleView = (row) => {
@@ -78,6 +93,11 @@ const handleDelete = (row) => {
 const handleAdd = () => {
   router.push('/menu/detail')
 }
+const pageChange = (num) => {
+  page.pageNum = num
+  getList()
+}
+
 getList()
 </script>
 

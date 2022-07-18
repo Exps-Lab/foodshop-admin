@@ -49,7 +49,6 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from "vue"
 import axios from "axios"
 import { uploadToken } from '@api/common/index'
 
@@ -77,7 +76,8 @@ const emits = defineEmits(['imgUploadFinish', 'removeImg'])
 
 const qiniuRequest = async (option) => {
   const { onProgress, onError, onSuccess, fileItem, name } = option
-  const keyname = fileItem.name
+  const extName = fileItem.name.split('.').at(-1)
+  const keyname = randomString(15) + '.' + extName
   // 从后端获取上传凭证token
   const { data: token } = await uploadToken()
   const formData = new FormData()
@@ -107,6 +107,15 @@ const qiniuRequest = async (option) => {
 const handleRemove = (file) => {
   emits('removeImg', file)
   return true
+}
+const randomString = (len = 32) => {
+  const chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678'
+  const maxPos = chars.length
+  let pwd = ''
+  for (let i = 0; i < len; i++) {
+    pwd += chars.charAt(Math.floor(Math.random() * maxPos))
+  }
+  return pwd
 }
 </script>
 
