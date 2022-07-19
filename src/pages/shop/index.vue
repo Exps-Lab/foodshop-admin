@@ -54,7 +54,7 @@ const columns = [
   {
     title: '联系电话',
     dataIndex: 'phone',
-    width: 100
+    width: 120
   },
   {
     title: '操作',
