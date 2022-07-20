@@ -13,7 +13,7 @@
   const tips = getHourTips()
 </script>
 
-<style lang="less">
+<style scoped lang="less">
   .welcome {
     font-size: 24px;
     margin-bottom: 20px;

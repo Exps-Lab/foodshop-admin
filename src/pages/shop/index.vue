@@ -109,17 +109,4 @@ onMounted(getList)
 </script>
 
 <style scoped lang="less">
-.childMenuBox {
-  position: relative;
-  margin: 0 0 20px 125px;
-  padding: 20px 20px 0 0;
-  border: 1px dashed #c5c5c5;
-  > label {
-    position: absolute;
-    color: #4e5969;
-    top: 8px;
-    left: -15px;
-    transform: translateX(-100%);
-  }
-}
 </style>

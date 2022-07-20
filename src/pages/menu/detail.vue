@@ -36,6 +36,12 @@
       <a-form-item :field="`children.${index}.icon`" label="图标">
         <a-input v-model="child.icon" placeholder="请输入图标名称" />
       </a-form-item>
+      <a-form-item>
+        <a-button @click="deleteChild(index)">
+          <template #icon><icon-delete /></template>
+          <template #default>删除</template>
+        </a-button>
+      </a-form-item>
     </div>
     
     <a-form-item v-if="!isDisabled">
@@ -82,6 +88,9 @@ const addChild = () => {
     icon: ''
   })
 }
+const deleteChild = (index) => {
+  form.children.splice(index, 1)
+}
 const handleSubmit = async (data) => {
   if (id) {
     await updateMenu({
@@ -106,17 +115,4 @@ init()
 </script>
 
 <style scoped lang="less">
-.childMenuBox {
-  position: relative;
-  margin: 0 0 20px 125px;
-  padding: 20px 20px 0 0;
-  border: 1px dashed #c5c5c5;
-  > label {
-    position: absolute;
-    color: #4e5969;
-    top: 8px;
-    left: -15px;
-    transform: translateX(-100%);
-  }
-}
 </style>

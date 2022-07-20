@@ -75,7 +75,7 @@
   }
 </script>
 
-<style lang="less">
+<style scoped lang="less">
   .box-wrapper {
     height: 100vh;
     min-width: 1100px;
