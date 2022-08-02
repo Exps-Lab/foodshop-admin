@@ -5,17 +5,15 @@
     </section>
     <a-table
       stripe
+      column-resizable
       :columns="columns"
       :data="state.data"
       :pagination="pagination"
-      :scroll="{x: 1000, y: 200}"
       @page-change="tableChange">
       <template #optional="{ record }">
         <a-button type="text" @click="handleView(record)">查看</a-button>
         <a-button type="text" @click="handleEdit(record)">编辑</a-button>
         <a-button type="text" @click="handleDelete(record)">删除</a-button>
-        <a-button type="text" @click="addGoods(record)">添加商品</a-button>
-        <a-button type="text" @click="showAllCategory(record)">商品类型</a-button>
       </template>
     </a-table>
   </div>
@@ -46,7 +44,7 @@ const columns = [
     dataIndex: 'address',
     ellipsis: true,
     tooltip: true,
-    width: 300
+    width: 400
   },
   {
     title: '店铺分类',
@@ -60,9 +58,7 @@ const columns = [
   },
   {
     title: '操作',
-    slotName: 'optional',
-    fixed: 'right',
-    width: 390
+    slotName: 'optional'
   }
 ]
 const pagination = reactive({
@@ -100,12 +96,6 @@ const handleDelete = (row) => {
       })
     }
   })
-}
-const addGoods = (row) => {
-  router.push(`/goods/detail?shop_id=${row.id}`)
-}
-const showAllCategory = (row) => {
-  router.push(`/goods/categoryList?shop_id=${row.id}`)
 }
 const handleAdd = () => {
   router.push('/shop/detail')

@@ -95,6 +95,33 @@ export const asyncRouterMap = [
         component: () => import('@pages/shop/detail.vue')
       }
     ]
+  },
+  {
+    path: "/goods",
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        meta: {
+          title: '商品列表'
+        },
+        component: () => import('@pages/goods/index.vue')
+      },
+      {
+        path: 'detail',
+        meta: {
+          title: '商品配置'
+        },
+        component: () => import('@pages/goods/detail.vue')
+      },
+      {
+        path: 'categoryList',
+        meta: {
+          title: '商铺分类列表'
+        },
+        component: () => import('@pages/goods/categoryList.vue')
+      }
+    ]
   }
 ];
 

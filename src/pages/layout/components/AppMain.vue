@@ -16,6 +16,7 @@
 .app-main {
   /* navbar = 56px; breadcrumb = 68px; bottom-space = 56px;  */
   min-height: calc(100vh - 56px - 68px - 56px);
+  max-width: calc(100vw - 200px - 48px);
   position: relative;
   margin: 0 24px;
   padding: 24px;
