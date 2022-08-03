@@ -8,6 +8,14 @@ export function getCategory (params) {
   })
 }
 
+export function deleteCategory (data) {
+  return request({
+    url: '/admin/auth/foodCategory/delete',
+    method: 'post',
+    data
+  })
+}
+
 export function goodsList (params) {
   return request({
     url: '/admin/auth/food/list',

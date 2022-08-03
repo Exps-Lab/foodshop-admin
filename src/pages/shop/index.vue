@@ -15,7 +15,7 @@
         <a-button type="text" @click="handleEdit(record)">编辑</a-button>
         <a-button type="text" @click="handleDelete(record)">删除</a-button>
         <a-button type="text" @click="addGoods(record)">添加商品</a-button>
-        <a-button type="text" @click="showAllCategory(record)">商品类型</a-button>
+        <a-button type="text" @click="showAllCategory(record)">所有商品类型</a-button>
       </template>
     </a-table>
   </div>
@@ -46,12 +46,12 @@ const columns = [
     dataIndex: 'address',
     ellipsis: true,
     tooltip: true,
-    width: 300
+    width: 330
   },
   {
     title: '店铺分类',
     dataIndex: 'category',
-    width: 170
+    width: 160
   },
   {
     title: '联系电话',
@@ -62,7 +62,7 @@ const columns = [
     title: '操作',
     slotName: 'optional',
     fixed: 'right',
-    width: 390
+    width: 420
   }
 ]
 const pagination = reactive({
