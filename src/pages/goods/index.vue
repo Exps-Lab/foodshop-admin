@@ -37,6 +37,16 @@ const columns = [
     width: 150
   },
   {
+    title: '所属商铺',
+    dataIndex: 'shop_name',
+    width: 200
+  },
+  {
+    title: '所属分类',
+    dataIndex: 'food_category_name',
+    width: 200
+  },
+  {
     title: '商品介绍',
     dataIndex: 'description',
     width: 200

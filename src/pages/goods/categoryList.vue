@@ -41,6 +41,11 @@
       width: 200
     },
     {
+      title: '包含商品',
+      dataIndex: 'foods_names',
+      width: 200
+    },
+    {
       title: '操作',
       slotName: 'optional'
     }
@@ -76,10 +81,14 @@
     Modal.confirm({
       title: '确认要删除商品分类吗？',
       onOk: () => {
-        deleteCategory({ id: row.id }).then(res => {
-          Message.success('删除成功！')
-          getList()
-        })
+        deleteCategory({ id: row.id })
+          .then(res => {
+            Message.success('删除成功！')
+            getList()
+          })
+          .catch(err => {
+            Message.error(err.data.msg)
+          })
       }
     })
   }
