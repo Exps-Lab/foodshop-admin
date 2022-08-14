@@ -18,7 +18,7 @@
 
 <script setup>
 import { reactive, onMounted } from 'vue'
-import {useRoute, useRouter} from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { Message, Modal } from '@arco-design/web-vue'
 import { goodsList, deleteGoods } from '@api/goods'
 
@@ -67,22 +67,21 @@ const state = reactive({
 })
 
 const getList = async () => {
-  let shopRes = await goodsList({
+  let param = {
     pageNum: pagination.current,
-    pageSize: pagination.pageSize,
-  })
-  if (foodCategoryId) {
-    shopRes.food_category_id = foodCategoryId
+    pageSize: pagination.pageSize
   }
+  foodCategoryId ? param.food_category_id = foodCategoryId : false
+  let shopRes = await goodsList(param)
   const { list, total } = shopRes.data
   state.data = list
   pagination.total = total
 }
 const handleView = (row) => {
-  router.push(`/goods/detail?goods_id=${row.id}&view=1`)
+  router.push(`/goods/detail?goods_id=${row.id}&shop_id=${row.shop_id}&view=1`)
 }
 const handleEdit = (row) => {
-  router.push(`/goods/detail?goods_id=${row.id}`)
+  router.push(`/goods/detail?goods_id=${row.id}&shop_id=${row.shop_id}`)
 }
 const handleDelete = (row) => {
   Modal.confirm({

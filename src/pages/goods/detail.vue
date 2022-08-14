@@ -324,7 +324,7 @@
   // init
   async function preGetDetail () {
     if (goodsId) {
-      const res = await getDetail({ id: goodsId })
+      const res = await getDetail({id: goodsId})
       const shop_image = res.data.image_path
       goodsInfo = Object.assign(goodsInfo, res.data)
       picFileList.goods_pic.push({
@@ -337,6 +337,7 @@
     router.go(-1)
   }
   async function init () {
+    await handleSearch('')
     await preGetDetail()
   }
 
