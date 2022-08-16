@@ -1,8 +1,8 @@
 <template>
   <section class="app-main">
-    <router-view #default="{ Component }">
+    <router-view #default="{ Component, route }">
       <transition-group name="fade-transform">
-        <div :key="Component">
+        <div :key="route.fullPath">
           <component :is="Component" />
         </div>
       </transition-group>
