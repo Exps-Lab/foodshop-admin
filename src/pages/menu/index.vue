@@ -1,16 +1,14 @@
 <template>
-  <div>
-    <section class="tool-bar">
-      <a-button type="primary" @click="handleAdd">新增</a-button>
-    </section>
-    <a-table :columns="columns" :data="state.data" :pagination="page" @page-change="pageChange">
-      <template #optional="{ record }">
-        <a-button type="text" @click="handleView(record)">查看</a-button>
-        <a-button type="text" @click="handleEdit(record)">编辑</a-button>
-        <a-button type="text" @click="handleDelete(record)">删除</a-button>
-      </template>
-    </a-table>
-  </div>
+  <section class="tool-bar">
+    <a-button type="primary" @click="handleAdd">新增</a-button>
+  </section>
+  <a-table :columns="columns" :data="state.data" :pagination="page" @page-change="pageChange">
+    <template #optional="{ record }">
+      <a-button type="text" @click="handleView(record)">查看</a-button>
+      <a-button type="text" @click="handleEdit(record)">编辑</a-button>
+      <a-button type="text" @click="handleDelete(record)">删除</a-button>
+    </template>
+  </a-table>
 </template>
 
 <script setup>

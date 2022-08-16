@@ -24,6 +24,7 @@
   height: 100%;
   width: 100%;
   display: flex;
+  overflow-x: hidden;
   // 主体区域
   .main-container {
     position: relative;
