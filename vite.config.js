@@ -10,6 +10,7 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, 'src'),
       '@api': path.resolve(__dirname, 'src/api'),
+      '@components': path.resolve(__dirname, 'src/components'),
       '@common': path.resolve(__dirname, 'src/common'),
       '@utils': path.resolve(__dirname, 'src/utils'),
       '@pages': path.resolve(__dirname, 'src/pages'),
@@ -19,10 +20,11 @@ export default defineConfig({
   },
   css: cssConf,
   server: {
+    host: '0.0.0.0',
     port: 8888,
     open: true,
     proxy: {
-      '/test': {
+      '/admin': {
         target: 'http://127.0.0.1:3000',
         changeOrigin: true
       },
