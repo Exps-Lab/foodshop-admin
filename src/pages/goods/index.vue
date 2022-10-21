@@ -56,12 +56,14 @@ const columns = [
     slotName: 'optional'
   }
 ]
+
 const pagination = reactive({
   showTotal: true,
   pageSize: 1,
   current: 1,
   total: 0
 })
+
 const state = reactive({
   data: []
 })
@@ -77,12 +79,15 @@ const getList = async () => {
   state.data = list
   pagination.total = total
 }
+
 const handleView = (row) => {
   router.push(`/goods/detail?goods_id=${row.id}&shop_id=${row.shop_id}&view=1`)
 }
+
 const handleEdit = (row) => {
   router.push(`/goods/detail?goods_id=${row.id}&shop_id=${row.shop_id}`)
 }
+
 const handleDelete = (row) => {
   Modal.confirm({
     title: '确认要删除商品吗？',
@@ -94,6 +99,7 @@ const handleDelete = (row) => {
     }
   })
 }
+
 const tableChange = (current) => {
   pagination.current = current
   getList()
