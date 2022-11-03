@@ -33,12 +33,14 @@
   })
   const onCollapse = (val, type) => {
     collapse.value = val
+    document.querySelector(".app-main").style.maxWidth = val ? 'calc(100vw - 50px - 48px)' : 'calc(100vw - 200px - 48px)'
   }
 </script>
 
 <style lang="less" scoped>
 .sidebar {
   height: 100%;
+  font-size: 0;
   background-color: #FFF;
   z-index: 1001;
   :deep(.arco-menu) {

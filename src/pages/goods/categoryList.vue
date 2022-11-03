@@ -52,7 +52,7 @@
   ]
   const pagination = reactive({
     showTotal: true,
-    pageSize: 1,
+    pageSize: 10,
     current: 1,
     total: 0
   })

@@ -8,7 +8,7 @@
       :columns="columns"
       :data="state.data"
       :pagination="pagination"
-      :scroll="{x: 1000, y: 200}"
+      :scroll="{ x: 1000 }"
       @page-change="tableChange">
       <template #optional="{ record }">
         <a-button type="text" @click="handleView(record)">查看</a-button>
@@ -67,7 +67,7 @@ const columns = [
 ]
 const pagination = reactive({
   showTotal: true,
-  pageSize: 1,
+  pageSize: 10,
   current: 1,
   total: 0
 })

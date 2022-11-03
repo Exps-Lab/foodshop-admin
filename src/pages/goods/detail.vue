@@ -337,11 +337,11 @@
     router.go(-1)
   }
   async function init () {
-    await handleSearch('')
-    await preGetDetail()
+    handleSearch('')
+    preGetDetail()
   }
 
-  onMounted(init)
+  init()
 </script>
 
 <style lang="less" scoped>
