@@ -29,7 +29,7 @@
           @search="handleSearch"
           @change="searchChange"
           :filter-option="false">
-            <a-option v-for="item of searchControl.option" :value="item.address || item.title">{{item.address || item.title}}</a-option>
+            <a-option v-for="item of searchControl.option" :value="item.address + item.title">{{item.address + item.title}}</a-option>
           <template #footer>
             <a-pagination
               style="display: flex; justify-content: flex-end; padding: 6px 0;"
@@ -239,7 +239,7 @@
 
   function searchChange(val) {
     for (let item of searchControl.option) {
-      if (item.address === val || item.title === val) {
+      if (item.address + item.title === val) {
         shopInfo.pos.lat = item.location.lat
         shopInfo.pos.lng = item.location.lng
       }
@@ -307,13 +307,13 @@
   }
 
   async function init () {
-    cityInfo = await getNowCity()
+    preGetDetail()
+    cityInfo = getNowCity()
     let categoryTemp = await getCategory()
     categoryOptions.value = filterCategory(categoryTemp.data, [], 1)
-    await preGetDetail()
   }
 
-  onMounted(init)
+  init()
 </script>
 
 <style lang="less" scoped>
