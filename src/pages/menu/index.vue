@@ -54,8 +54,8 @@ const page = reactive({
 })
 const getList = () => {
   getMenuList({
-    pageNum: page.pageNum,
-    pageSize: page.pageSize
+    page_num: page.pageNum,
+    page_size: page.pageSize
   }).then(res => {
     res.data.list.forEach(item => {
       item.key = item.id
