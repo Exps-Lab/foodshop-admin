@@ -29,7 +29,7 @@
           @search="handleSearch"
           @change="searchChange"
           :filter-option="false">
-            <a-option v-for="item of searchControl.option" :value="item.address + ' ' + item.title">{{item.address + ' ' + item.title}}</a-option>
+            <a-option v-for="(item, index) of searchControl.option" :value="item.address + ' ' + item.title" :key="index">{{item.address + ' ' + item.title}}</a-option>
           <template #footer>
             <a-pagination
               style="display: flex; justify-content: flex-end; padding: 6px 0;"
@@ -37,7 +37,7 @@
               size="mini"
               show-total
               :page-size="10"
-              :current="searchControl.pn"
+              :current="searchControl.pageNum"
               :total="searchControl.total"
               :hide-on-single-page="true"
               @change="controlSearchPage"/>
@@ -184,7 +184,7 @@
     loading: false,
     option: [],
     total: 0,
-    pn: 1
+    pageNum: 1
   })
   const picFileList = reactive({
     avatar: [],
@@ -218,12 +218,12 @@
   async function handleSearch(val) {
     searchControl.loading = true
     val ? searchControl.searchText = val : false
-    val && val !== shopInfo.address ? searchControl.pn = 1 : false
+    val && val !== shopInfo.address ? searchControl.pageNum = 1 : false
 
     const res = await placeSearch({
       keyword: val || searchControl.searchText,
       city_name: cityInfo.name,
-      pn: searchControl.pn
+      page_num: searchControl.pageNum
     })
 
     const { place, total } = res.data
@@ -233,7 +233,7 @@
   }
 
   function controlSearchPage(nowPage) {
-    searchControl.pn = nowPage
+    searchControl.pageNum = nowPage
     handleSearch()
   }
 

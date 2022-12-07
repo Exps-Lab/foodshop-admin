@@ -26,7 +26,7 @@
           placeholder="请输入商品归属种类"
           :filter-option="false"
           @search="handleSearch">
-          <a-option v-for="item of searchControl.option" :value="item.id">{{item.name}}</a-option>
+          <a-option v-for="item of searchControl.option" :value="item.id" :key="item.id">{{item.name}}</a-option>
         </a-select>
       </a-form-item>
 
@@ -261,8 +261,8 @@
     const res = await getCategory({
       shop_id: shopId,
       name: val,
-      pageNum: searchControl.pageNum,
-      pageSize: searchControl.pageSize
+      page_num: searchControl.pageNum,
+      page_size: searchControl.pageSize
     })
 
     const { list } = res.data

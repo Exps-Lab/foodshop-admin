@@ -62,8 +62,8 @@
 
   const getList = async () => {
     let query = {
-      pageNum: pagination.current,
-      pageSize: pagination.pageSize
+      page_num: pagination.current,
+      page_size: pagination.pageSize
     }
     if (shopId) {
       query.shop_id = shopId

@@ -77,10 +77,10 @@ const state = reactive({
 
 const getList = async () => {
   let shopRes = await shopList({
-    pn: pagination.current,
-    rn: pagination.pageSize
+    page_num: pagination.current,
+    page_size: pagination.pageSize
   })
-  const { pn, rn, list, total } = shopRes.data
+  const { page_num, page_size, list, total } = shopRes.data
   state.data = list
   pagination.total = total
 }
