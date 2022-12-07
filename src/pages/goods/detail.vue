@@ -98,7 +98,7 @@
         label="商品特点">
         <a-select v-model="goodsInfo.attrs" :style="{ width:'300px' }" placeholder="请选择商品特点" multiple>
           <a-option value="is_new">新品上市</a-option>
-          <a-option value="id_hot">招牌商品</a-option>
+          <a-option value="is_hot">招牌商品</a-option>
         </a-select>
       </a-form-item>
 

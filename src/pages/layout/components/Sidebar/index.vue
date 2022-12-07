@@ -18,6 +18,8 @@
   import { ref, computed } from "vue"
   import { useRouter } from "vue-router"
   import Item from './Item.vue'
+  import logo from './imgs/logo.png'
+  import logoOnly from './imgs/logo-only.png'
 
   const props = defineProps({
     list: Array
@@ -28,8 +30,7 @@
 
   const path = computed(() => router.currentRoute.value.path)
   const logoPath = computed(() => {
-    const url = collapse.value ? './imgs/logo-only.png' : './imgs/logo.png'
-    return new URL(url, import.meta.url).href
+    return collapse.value ? logoOnly : logo
   })
   const onCollapse = (val, type) => {
     collapse.value = val
