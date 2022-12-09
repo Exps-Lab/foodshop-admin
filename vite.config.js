@@ -9,7 +9,7 @@ export default (params => {
   const { mode } = params
   return defineConfig({
     root: './',
-    base: mode === 'production' ? path.resolve(__dirname, '/admin-user') + '/' : './',
+    base: './',
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),
