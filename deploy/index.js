@@ -13,7 +13,7 @@ const serverConf = {
   host: '43.138.5.12',
   port: 22,
   username: 'root',
-  password: 'Haihan12345'
+  password: 'Haihan12345,.tx'
 }
 
 try {
@@ -59,7 +59,7 @@ function tarShell () {
         stream.end(
           `
           j /home/website/
-          tar xvf admin-user.tar
+          tar -xvf admin-user.tar
           chmod 777 admin-user
           rm -rf admin-user.tar
           exit
