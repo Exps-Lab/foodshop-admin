@@ -92,7 +92,7 @@ const handleDelete = (row) => {
   Modal.confirm({
     title: '确认要删除商品吗？',
     onOk: () => {
-      deleteGoods({ id: row.id }).then(res => {
+      deleteGoods({ id: row.id }).then(() => {
         Message.success('删除成功！')
         getList()
       })

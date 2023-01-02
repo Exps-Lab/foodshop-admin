@@ -4,8 +4,7 @@ import { userStore } from '@store/user'
 
 let loading = false
 let requestCount = 0
-let redirecturi = ''
-const host = window.location.origin
+// const host = window.location.origin
 
 const showLoading = () => {
   if (requestCount === 0 && !loading) {
@@ -70,12 +69,14 @@ service.interceptors.response.use(
 );
 
 function handle(req) {
+  // let redirecturi = ''
   if (req.params && req.params.redirecturi) {
-    redirecturi = req.params.redirecturi
+    // let redirecturi = req.params.redirecturi
     delete req.params.redirecturi
-  } else {
-    redirecturi = ''
   }
+  // else {
+  //   let redirecturi = ''
+  // }
   return service(req)
 }
 

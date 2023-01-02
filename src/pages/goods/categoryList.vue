@@ -82,7 +82,7 @@
       title: '确认要删除商品分类吗？',
       onOk: () => {
         deleteCategory({ id: row.id })
-          .then(res => {
+          .then(() => {
             Message.success('删除成功！')
             getList()
           })

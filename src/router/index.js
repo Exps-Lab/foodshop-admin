@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, createWebHashHistory } from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 import { markRaw } from 'vue'
 import LayoutComponent from "../pages/layout/Layout.vue";
 const Layout = markRaw(LayoutComponent)

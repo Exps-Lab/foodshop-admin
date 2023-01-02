@@ -40,7 +40,7 @@ export const userStore = defineStore('user', {
       const _authStore = authStore()
       return new Promise((resolve, reject) => {
         logout()
-          .then((res) => {
+          .then(() => {
             this.resetUserInfo()
             _authStore.resetRoutes()
             removeToken()

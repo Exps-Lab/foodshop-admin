@@ -2,6 +2,7 @@ import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
 import { cssConf } from './viteConf'
+import eslint from 'vite-plugin-eslint'
 
 export default (params => {
   // 配置文件中加载环境变量
@@ -22,7 +23,15 @@ export default (params => {
         '@router': path.resolve(__dirname, 'src/router'),
       }
     },
-    plugins: [vue()],
+    plugins: [
+      vue(),
+      // 运行时检查eslint规范
+      eslint({
+        cache: false,
+        // fix: true,
+        include: ['src/**/*.js', 'src/**/*.vue']
+      }),
+    ],
     css: cssConf,
     build: {
       target: 'es2020',

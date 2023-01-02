@@ -63,7 +63,7 @@
   const handleSubmit = ({ values, errors }) => {
     if (!errors) {
       store.login(values)
-        .then(res => {
+        .then(() => {
           // 跳转到dashboard页
           Message.success('登录成功！')
           router.push('/')

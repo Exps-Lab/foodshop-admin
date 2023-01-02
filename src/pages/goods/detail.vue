@@ -150,7 +150,7 @@
 </template>
 
 <script setup>
-  import { reactive, onMounted } from 'vue'
+  import { reactive } from 'vue'
   import { useRouter, useRoute } from "vue-router"
   import { getCategory, getDetail, addGoods, updateGoods } from '@api/goods'
   import { Message } from '@arco-design/web-vue';

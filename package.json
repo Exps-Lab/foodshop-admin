@@ -8,7 +8,9 @@
     "build:prod": "vite build --mode production",
     "preview": "vite preview",
     "deploy": "upload-remote -r ./admin-user -n admin-user",
-    "remote_build": "npm run build:prod && npm run deploy"
+    "remote_build": "npm run build:prod && npm run deploy",
+    "lint": "eslint --ext .js,.vue src --fix",
+    "prepare": "husky install"
   },
   "dependencies": {
     "axios": "^0.27.2",
@@ -24,6 +26,16 @@
     "@arco-design/web-vue": "^2.29.0",
     "@vitejs/plugin-vue": "^2.3.0",
     "autoprefixer": "^10.4.7",
-    "vite": "^2.9.0"
+    "eslint": "^8.31.0",
+    "eslint-plugin-vue": "^9.8.0",
+    "husky": "^8.0.2",
+    "lint-staged": "^13.1.0",
+    "vite": "^2.9.0",
+    "vite-plugin-eslint": "^1.8.1"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,vue}": [
+      "eslint --fix"
+    ]
   }
 }

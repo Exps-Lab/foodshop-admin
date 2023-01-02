@@ -54,7 +54,7 @@ import { uploadToken } from '@api/common/index'
 
 const domain = 'https://upload-z1.qiniup.com'
 const qiniuAddr = 'refp5eddq.hb-bkt.clouddn.com'
-const props = defineProps({
+defineProps({
   disabled: {
     type: Boolean,
     default: false

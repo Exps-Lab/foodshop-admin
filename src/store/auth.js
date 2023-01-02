@@ -13,7 +13,7 @@ function routerFilter (feRouter, ServerRouter, res, deepLevel) {
           const { children, ...data } = feItem
           const tempData = { ...data }
           deepLevel++
-          tempData.children = routerFilter(feItem.children, serverItem.children, [], deepLevel)
+          tempData.children = routerFilter(children, serverItem.children, [], deepLevel)
           deepLevel--
           res.push(tempData)
         }
@@ -26,14 +26,14 @@ function routerFilter (feRouter, ServerRouter, res, deepLevel) {
             path: serverItem.path.slice(feItem.path.length + 1)
           }]
           const { path, ...data } = feItem
-          const tempData = { ...data, path: feItem.path }
+          const tempData = { ...data, path }
           deepLevel++
           tempData.children = routerFilter(feItem.children, fakeChildPath, [], deepLevel)
           deepLevel--
           res.push(tempData)
         }
         break
-      } else {}
+      }
     }
   }
   return res

@@ -81,7 +81,7 @@ const handleDelete = (row) => {
   Modal.confirm({
     title: '确认删除？',
     onOk: () => {
-      deleteMenu({ id: row.id }).then(res => {
+      deleteMenu({ id: row.id }).then(() => {
         Message.success('删除成功！')
         getList()
       })

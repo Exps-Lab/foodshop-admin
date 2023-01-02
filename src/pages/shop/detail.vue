@@ -168,7 +168,7 @@
 </template>
 
 <script setup>
-  import { ref, reactive, onMounted } from 'vue'
+  import { ref, reactive } from 'vue'
   import { useRouter, useRoute } from "vue-router"
   import { getNowCity, placeSearch } from '@api/common'
   import { getCategory, getDetail, addShop, updateShop } from '@api/shop'

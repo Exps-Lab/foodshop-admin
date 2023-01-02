@@ -32,7 +32,7 @@
   const logoPath = computed(() => {
     return collapse.value ? logoOnly : logo
   })
-  const onCollapse = (val, type) => {
+  const onCollapse = (val) => {
     collapse.value = val
     document.querySelector(".app-main").style.maxWidth = val ? 'calc(100vw - 50px - 48px)' : 'calc(100vw - 200px - 48px)'
   }
