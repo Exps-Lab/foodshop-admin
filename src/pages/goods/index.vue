@@ -70,8 +70,8 @@ const state = reactive({
 
 const getList = async () => {
   let param = {
-    pageNum: pagination.current,
-    pageSize: pagination.pageSize
+    page_num: pagination.current,
+    page_size: pagination.pageSize
   }
   foodCategoryId ? param.food_category_id = foodCategoryId : false
   let shopRes = await goodsList(param)
@@ -92,7 +92,7 @@ const handleDelete = (row) => {
   Modal.confirm({
     title: '确认要删除商品吗？',
     onOk: () => {
-      deleteGoods({ id: row.id }).then(res => {
+      deleteGoods({ id: row.id }).then(() => {
         Message.success('删除成功！')
         getList()
       })

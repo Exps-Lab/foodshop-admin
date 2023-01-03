@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 import { markRaw } from 'vue'
 import LayoutComponent from "../pages/layout/Layout.vue";
 const Layout = markRaw(LayoutComponent)
@@ -129,6 +129,6 @@ export const noAuthRouter = { path: '/:pathMatch(.*)*', redirect: '/noAuth/index
 
 export default createRouter({
   scrollBehavior: () => ({ top: 0 }),
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes: constantRouterMap
 })

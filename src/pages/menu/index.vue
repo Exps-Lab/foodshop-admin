@@ -54,8 +54,8 @@ const page = reactive({
 })
 const getList = () => {
   getMenuList({
-    pageNum: page.pageNum,
-    pageSize: page.pageSize
+    page_num: page.pageNum,
+    page_size: page.pageSize
   }).then(res => {
     res.data.list.forEach(item => {
       item.key = item.id
@@ -81,7 +81,7 @@ const handleDelete = (row) => {
   Modal.confirm({
     title: '确认删除？',
     onOk: () => {
-      deleteMenu({ id: row.id }).then(res => {
+      deleteMenu({ id: row.id }).then(() => {
         Message.success('删除成功！')
         getList()
       })

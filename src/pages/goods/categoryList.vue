@@ -62,8 +62,8 @@
 
   const getList = async () => {
     let query = {
-      pageNum: pagination.current,
-      pageSize: pagination.pageSize
+      page_num: pagination.current,
+      page_size: pagination.pageSize
     }
     if (shopId) {
       query.shop_id = shopId
@@ -82,7 +82,7 @@
       title: '确认要删除商品分类吗？',
       onOk: () => {
         deleteCategory({ id: row.id })
-          .then(res => {
+          .then(() => {
             Message.success('删除成功！')
             getList()
           })

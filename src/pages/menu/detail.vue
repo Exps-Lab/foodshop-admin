@@ -43,7 +43,7 @@
         </a-button>
       </a-form-item>
     </div>
-    
+
     <a-form-item v-if="!isDisabled">
       <a-button @click="handleCancel">取消</a-button>
       <a-button type="primary" html-type="submit">保存</a-button>
@@ -103,7 +103,7 @@ const handleSubmit = async (data) => {
   Message.success('保存成功！')
   history.back()
 }
-const handleCancel = async (data) => {
+const handleCancel = async () => {
   history.back()
 }
 const init = () => {

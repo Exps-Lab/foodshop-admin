@@ -77,10 +77,10 @@ const state = reactive({
 
 const getList = async () => {
   let shopRes = await shopList({
-    pn: pagination.current,
-    rn: pagination.pageSize
+    page_num: pagination.current,
+    page_size: pagination.pageSize
   })
-  const { pn, rn, list, total } = shopRes.data
+  const { list, total } = shopRes.data
   state.data = list
   pagination.total = total
 }
@@ -94,7 +94,7 @@ const handleDelete = (row) => {
   Modal.confirm({
     title: '确认要删除这家商铺吗？',
     onOk: () => {
-      deleteShop({ id: row.id }).then(res => {
+      deleteShop({ id: row.id }).then(() => {
         Message.success('删除成功！')
         getList()
       })

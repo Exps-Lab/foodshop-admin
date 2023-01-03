@@ -26,7 +26,7 @@
           placeholder="请输入商品归属种类"
           :filter-option="false"
           @search="handleSearch">
-          <a-option v-for="item of searchControl.option" :value="item.id">{{item.name}}</a-option>
+          <a-option v-for="item of searchControl.option" :value="item.id" :key="item.id">{{item.name}}</a-option>
         </a-select>
       </a-form-item>
 
@@ -98,7 +98,7 @@
         label="商品特点">
         <a-select v-model="goodsInfo.attrs" :style="{ width:'300px' }" placeholder="请选择商品特点" multiple>
           <a-option value="is_new">新品上市</a-option>
-          <a-option value="id_hot">招牌商品</a-option>
+          <a-option value="is_hot">招牌商品</a-option>
         </a-select>
       </a-form-item>
 
@@ -150,7 +150,7 @@
 </template>
 
 <script setup>
-  import { reactive, onMounted } from 'vue'
+  import { reactive } from 'vue'
   import { useRouter, useRoute } from "vue-router"
   import { getCategory, getDetail, addGoods, updateGoods } from '@api/goods'
   import { Message } from '@arco-design/web-vue';
@@ -261,8 +261,8 @@
     const res = await getCategory({
       shop_id: shopId,
       name: val,
-      pageNum: searchControl.pageNum,
-      pageSize: searchControl.pageSize
+      page_num: searchControl.pageNum,
+      page_size: searchControl.pageSize
     })
 
     const { list } = res.data

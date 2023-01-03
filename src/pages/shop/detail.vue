@@ -29,7 +29,7 @@
           @search="handleSearch"
           @change="searchChange"
           :filter-option="false">
-            <a-option v-for="item of searchControl.option" :value="item.address + item.title">{{item.address + item.title}}</a-option>
+            <a-option v-for="(item, index) of searchControl.option" :value="item.address + ' ' + item.title" :key="index">{{item.address + ' ' + item.title}}</a-option>
           <template #footer>
             <a-pagination
               style="display: flex; justify-content: flex-end; padding: 6px 0;"
@@ -37,7 +37,7 @@
               size="mini"
               show-total
               :page-size="10"
-              :current="searchControl.pn"
+              :current="searchControl.pageNum"
               :total="searchControl.total"
               :hide-on-single-page="true"
               @change="controlSearchPage"/>
@@ -168,7 +168,7 @@
 </template>
 
 <script setup>
-  import { ref, reactive, onMounted } from 'vue'
+  import { ref, reactive } from 'vue'
   import { useRouter, useRoute } from "vue-router"
   import { getNowCity, placeSearch } from '@api/common'
   import { getCategory, getDetail, addShop, updateShop } from '@api/shop'
@@ -184,7 +184,7 @@
     loading: false,
     option: [],
     total: 0,
-    pn: 1
+    pageNum: 1
   })
   const picFileList = reactive({
     avatar: [],
@@ -218,12 +218,12 @@
   async function handleSearch(val) {
     searchControl.loading = true
     val ? searchControl.searchText = val : false
-    val && val !== shopInfo.address ? searchControl.pn = 1 : false
+    val && val !== shopInfo.address ? searchControl.pageNum = 1 : false
 
     const res = await placeSearch({
       keyword: val || searchControl.searchText,
-      city_name: cityInfo.data.name,
-      pn: searchControl.pn
+      city_name: cityInfo.name,
+      page_num: searchControl.pageNum
     })
 
     const { place, total } = res.data
@@ -233,13 +233,13 @@
   }
 
   function controlSearchPage(nowPage) {
-    searchControl.pn = nowPage
+    searchControl.pageNum = nowPage
     handleSearch()
   }
 
   function searchChange(val) {
     for (let item of searchControl.option) {
-      if (item.address + item.title === val) {
+      if (item.address + ' ' + item.title === val) {
         shopInfo.pos.lat = item.location.lat
         shopInfo.pos.lng = item.location.lng
       }
@@ -308,7 +308,9 @@
 
   async function init () {
     preGetDetail()
-    cityInfo = getNowCity()
+    getNowCity().then(({ data }) => {
+      cityInfo = data
+    })
     let categoryTemp = await getCategory()
     categoryOptions.value = filterCategory(categoryTemp.data, [], 1)
   }
