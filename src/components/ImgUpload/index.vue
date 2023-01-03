@@ -53,7 +53,7 @@ import axios from "axios"
 import { uploadToken } from '@api/common/index'
 
 const domain = 'https://upload-z1.qiniup.com'
-const qiniuAddr = 'refp5eddq.hb-bkt.clouddn.com'
+const qiniuAddr = 'static.foodshop.fun'
 defineProps({
   disabled: {
     type: Boolean,
