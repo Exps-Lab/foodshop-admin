@@ -127,6 +127,58 @@
       </a-form-item>
 
       <a-form-item
+        field="measure"
+        label="是否设置满减优惠">
+        <a-switch v-model="shopInfo.has_discount" />
+      </a-form-item>
+
+      <a-form-item
+        class="discount-box"
+        v-if="shopInfo.has_discount"
+        label="设置满减优惠">
+        <a-row :gutter="24" v-for="(item, index) in shopInfo.discount_Arr" :key="index">
+          <a-col :span="8">
+            <a-form-item :field="'discount_Arr.' + index + '.total_val'" label-col-flex="15px" label="满"
+              :rules="[{ required: true, message: '满减上限不能为空'}]">
+              <a-input-number
+                hide-button
+                :min="0"
+                :precision="0"
+                :style="{ width:'100px' }"
+                v-model="item.total_val">
+               </a-input-number>
+            </a-form-item>
+          </a-col>
+          <a-col :span="8">
+             <a-form-item :field="'discount_Arr.' + index + '.discount_val'" label-col-flex="15px" label="减"
+             :rules="[{ required: true, message: '满减额度不能为空'}]">
+              <a-input-number
+                hide-button
+                :min="0"
+                :precision="0"
+                :style="{ width:'100px' }"
+                v-model="item.discount_val">
+              </a-input-number>
+            </a-form-item>
+          </a-col>
+          <a-col :span="8">
+            <section class="operator-box">
+              <a-button type="primary" @click="addDiscount(index)">
+                <template #icon>
+                  <icon-plus />
+                </template>
+              </a-button>
+              <a-button type="primary" @click="deleteDiscount(index)">
+                <template #icon>
+                  <icon-minus />
+                </template>
+              </a-button>
+            </section>
+          </a-col>
+        </a-row>
+      </a-form-item>
+
+      <a-form-item
         field="shop_image.avatar"
         label="上传店铺头像"
         :rules="[{ required: true, message: '店铺头像不能为空'}]"
@@ -192,7 +244,7 @@
     food_licence: []
   })
   let cityInfo = {}
-  let categoryOptions = ref([]);
+  let categoryOptions = ref([])
 
   let shopInfo = reactive({
     name: '',
@@ -212,8 +264,31 @@
       avatar: '',
       business_licence: '',
       food_licence: ''
-    }
+    },
+    has_discount: false,
+    discount_Arr: [{
+      total_val: 0,
+      discount_val: 0
+    }]
   })
+
+  /**
+   * 添加满减优惠
+   * @param { number } index
+   */
+  const addDiscount = (index) => {
+    shopInfo.discount_Arr.splice(index+1, 0 , {
+      total_val: 0,
+      discount_val: 0
+    })
+  }
+  /**
+   * 删除满减优惠
+   * @param { number } index
+   */
+  const deleteDiscount = (index) => {
+    shopInfo.discount_Arr.splice(index, 1)
+  }
 
   async function handleSearch(val) {
     searchControl.loading = true
@@ -319,4 +394,9 @@
 </script>
 
 <style lang="less" scoped>
+  :deep(.discount-box) {
+    .arco-form-item-content-flex {
+      flex-wrap: wrap;
+    }
+  }
 </style>
