@@ -63,7 +63,7 @@ npm run dev
 <img width="200" src="https://github.com/Exps-Lab/foodshop-admin/blob/master/screenshot/addGoods.png" alt="商品添加">
 
 #### 用户列表页：
-<img width="200" src="https://github.com/Exps-Lab/foodshop-admin/blob/master/screenshot/useList.png" alt="用户列表页">
+<img width="200" src="https://github.com/Exps-Lab/foodshop-admin/blob/master/screenshot/userList.png" alt="用户列表页">
 
 ## 关联项目列表
 | 项目             | 项目描述       | 技术栈                                                                    | 项目链接          |
