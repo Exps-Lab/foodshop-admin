@@ -51,19 +51,19 @@ npm run dev
 
 #### Admin管理后台截图
 #### 欢迎页：
-<img width="200" src="https://github.com/Exps-Lab/foodshop-h5/blob/master/screenshot/welcome.png" alt="welcome">
+<img width="200" src="https://github.com/Exps-Lab/foodshop-admin/blob/master/screenshot/welcome.png" alt="welcome">
 
 #### 商铺列表页：
-<img width="200" src="https://github.com/Exps-Lab/foodshop-h5/blob/master/screenshot/shopList.png" alt="商铺列表">
+<img width="200" src="https://github.com/Exps-Lab/foodshop-admin/blob/master/screenshot/shopList.png" alt="商铺列表">
 
 #### 添加商铺页：
-<img width="200" src="https://github.com/Exps-Lab/foodshop-h5/blob/master/screenshot/shopModify.png" alt="添加商铺">
+<img width="200" src="https://github.com/Exps-Lab/foodshop-admin/blob/master/screenshot/shopModify.png" alt="添加商铺">
 
 #### 商品变更页：
-<img width="200" src="https://github.com/Exps-Lab/foodshop-h5/blob/master/screenshot/addGoods.png" alt="商品添加">
+<img width="200" src="https://github.com/Exps-Lab/foodshop-admin/blob/master/screenshot/addGoods.png" alt="商品添加">
 
 #### 用户列表页：
-<img width="200" src="https://github.com/Exps-Lab/foodshop-h5/blob/master/screenshot/useList.png" alt="用户列表页">
+<img width="200" src="https://github.com/Exps-Lab/foodshop-admin/blob/master/screenshot/useList.png" alt="用户列表页">
 
 ## 关联项目列表
 | 项目             | 项目描述       | 技术栈                                                                    | 项目链接          |
