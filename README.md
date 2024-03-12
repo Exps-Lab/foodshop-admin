@@ -43,7 +43,7 @@ npm run dev
 访问: http://localhost:8888（可依照需要自行更改配置）
 
 ```
-> Tips：最好同时启动foodshop-node端server的项目。目前foodshop-admin项目数据都是从接口获取的真实数据！
+> **Tips：项目运行前 请先安装并启动 mongoDB，保证数据正常存取和所有功能正常使用。目前项目数据都是从接口获取的真实数据！**
 
 ## h5效果演示
 #### h5端线上效果演示，直接扫码体验：
