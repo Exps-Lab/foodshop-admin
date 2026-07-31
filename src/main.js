@@ -14,4 +14,12 @@ app.use(createPinia())
 app.use(ArcoVue)
 app.use(ArcoVueIcon)
 
+app.config.performance = true
+app.config.errorHandler = (err, instance, info) => {
+  console.error('[Vue-Error]', err, instance, info);
+}
+app.config.warnHandler = (msg, instance, trace) => {
+  console.warn('[Vue-Warn]', msg, instance, trace);
+}
+
 app.mount('#app')

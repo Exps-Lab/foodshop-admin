@@ -2,25 +2,32 @@ import axios from "axios"
 import router from '@router'
 import { userStore } from '@store/user'
 
-let loading = false
+import Loading from '@/composables/Loading/index.js'
+
 let requestCount = 0
-// const host = window.location.origin
+let loadingInstance = null
+let lastShowTimestamp = 0
+const LOADING_MIN_TIME_MS = 300
 
 const showLoading = () => {
-  if (requestCount === 0 && !loading) {
-    // TODO: 显示loading组件
-    loading = true
-    // console.log('Loading Start...', Date.now())
+  if (!loadingInstance) {
+    loadingInstance = Loading()
+    loadingInstance?.showLoading('正在处理中...')
   }
+  lastShowTimestamp = Date.now()
   requestCount++
 }
 
 const hideLoading = () => {
-  requestCount--
-  if (requestCount === 0) {
-    // TODO: 隐藏loading组件
-    loading = false
-    // console.log('Loading End...', Date.now())
+  requestCount = Math.max(requestCount - 1, 0)
+
+  if (requestCount === 0 && loadingInstance) {
+    const delay = Math.max(LOADING_MIN_TIME_MS - Date.now() - lastShowTimestamp, 0);
+    const clearTimer = setTimeout(() => {
+      clearTimeout(clearTimer)
+      loadingInstance?.hideLoading()
+      loadingInstance = null
+    }, delay)
   }
 }
 
@@ -55,7 +62,7 @@ service.interceptors.response.use(
           router.push('/login')
         })
       }
-      // TODO: 组件提示用户错误信息
+      // TODO: 其他错误码，组件提示用户错误信息
       return Promise.reject(response)
     } else {
       return response.data
