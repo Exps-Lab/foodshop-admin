@@ -46,3 +46,12 @@ export function deleteShop (data) {
     data
   })
 }
+
+export function genShopDesc (params, selfConfig) {
+  return request({
+    url: '/admin/auth/ai/genShopDesc',
+    method: 'get',
+    params,
+    ...selfConfig
+  })
+}

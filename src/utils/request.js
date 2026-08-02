@@ -32,13 +32,15 @@ const hideLoading = () => {
 }
 
 const service = axios.create({
-  timeout: 5000
+  timeout: 60 * 1000
 })
 
 // Sign in the request interceptors.
 service.interceptors.request.use(
   config => {
-    showLoading()
+    if (config?.needLoading !== false) {
+      showLoading()
+    }
     return config
   },
   error => {
@@ -52,7 +54,9 @@ service.interceptors.request.use(
 // Sign in the response interceptors.
 service.interceptors.response.use(
   response => {
-    hideLoading()
+    if (response?.config?.needLoading !== false) {
+      hideLoading()
+    }
     const store = userStore()
     const res = response.data
     if (res.code !== 1) {
@@ -69,22 +73,29 @@ service.interceptors.response.use(
     }
   },
   error => {
-    hideLoading()
+    if (error?.config?.needLoading !== false) {
+      hideLoading()
+    }
     console.log("Error:" + error)
     return Promise.reject(error)
   }
 );
 
 function handle(req) {
-  // let redirecturi = ''
-  if (req.params && req.params.redirecturi) {
-    // let redirecturi = req.params.redirecturi
-    delete req.params.redirecturi
+  const { needLoading = true, timeout = 60, ...axiosConfig } = req || {}
+
+  if (axiosConfig.params && axiosConfig.params.redirecturi) {
+    delete axiosConfig.params.redirecturi
   }
-  // else {
-  //   let redirecturi = ''
-  // }
-  return service(req)
+
+  axiosConfig.needLoading = needLoading;
+
+  const timeoutNum = Number(timeout)
+  if (!Number.isNaN(timeoutNum) && timeoutNum > 0) {
+    axiosConfig.timeout = timeoutNum < 1000 ? timeoutNum * 1000 : timeoutNum
+  }
+
+  return service(axiosConfig)
 }
 
 export default handle

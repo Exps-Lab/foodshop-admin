@@ -63,13 +63,39 @@
         label="店铺简介"
         :rules="[{ required: true, message: '店铺简介不能为空'}]"
         :validate-trigger="['change', 'blur']">
-        <a-textarea
-          v-model="shopInfo.intro_text"
-          placeholder="请输入店铺简介"
-          :auto-size="{ minRows: 3 }"
-          :max-length="150"
-          show-word-limit>
-        </a-textarea>
+          <a-textarea
+            v-model="shopInfo.intro_text"
+            placeholder="请输入店铺简介"
+            :auto-size="{ minRows: 5 }"
+            :max-length="200"
+            show-word-limit
+            allow-clear>
+          </a-textarea>
+          <template #extra>
+            <a-space>
+              <a-row :gutter="8">
+                <a-col :span="12">
+                  <a-input
+                    v-model.trim="simpleIntroText"
+                    placeholder="输入简介关键词"
+                    allow-clear
+                  >
+                  </a-input>
+                </a-col>
+                <a-col :span="4">
+                  <a-button
+                    style="width: 200px"
+                    type="primary"
+                    status="danger"
+                    @click="aiGenShopDesc"
+                    :loading="aiGenLoading"
+                  >
+                    {{ aiBtnText }}
+                  </a-button>
+                </a-col>
+              </a-row>
+            </a-space>
+          </template>
       </a-form-item>
 
       <a-form-item
@@ -220,10 +246,10 @@
 </template>
 
 <script setup>
-  import { ref, reactive } from 'vue'
+  import { ref, reactive, watch } from 'vue'
   import { useRouter, useRoute } from "vue-router"
   import { getNowCity, placeSearch } from '@api/common'
-  import { getCategory, getDetail, addShop, updateShop } from '@api/shop'
+  import { getCategory, getDetail, addShop, updateShop, genShopDesc } from '@api/shop'
   import { Message } from '@arco-design/web-vue';
   import ImgUpload from '@components/ImgUpload/index.vue'
 
@@ -271,6 +297,33 @@
       discount_val: 0
     }]
   })
+  const simpleIntroText = ref('')
+  const aiGenLoading = ref(false)
+  const aiBtnText = ref('AI一键生成店铺简介')
+  let typingTimer = null
+
+  watch(aiGenLoading, (val) => {
+    if (val) {
+      const text = 'AI正在生成中...'
+      let charIdx = 0
+      typingTimer = setInterval(() => {
+        aiBtnText.value = text.substring(0, charIdx + 1)
+        charIdx++
+        if (charIdx >= text.length) {
+          charIdx = 0
+        }
+      }, 200)
+    } else {
+      if (typingTimer) {
+        clearInterval(typingTimer)
+        typingTimer = null
+      }
+      aiBtnText.value = 'AI一键生成店铺简介'
+    }
+  })
+
+
+
 
   /**
    * 添加满减优惠
@@ -365,6 +418,31 @@
       }
     }
     return res
+  }
+
+  /**
+   * 一键生成店铺简介
+   */
+  async function aiGenShopDesc () {
+    const keyword = `${simpleIntroText.value} ${shopInfo.name}`
+    if (!simpleIntroText.value) {
+      Message.error('请输入店铺简介关键词便于ai生成！')
+      return
+    }
+
+    try {
+      aiGenLoading.value = true
+      const res = await genShopDesc({
+        keyword
+      }, {
+        needLoading: false,
+        timeout: 60 * 1000
+      })
+      const aiResultDesc = res?.data?.description ?? res?.data?.keyword ?? ''
+      shopInfo.intro_text = aiResultDesc
+    } finally {
+      aiGenLoading.value = false
+    }
   }
 
   async function preGetDetail () {
