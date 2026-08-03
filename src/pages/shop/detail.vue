@@ -66,31 +66,41 @@
           <a-textarea
             v-model="shopInfo.intro_text"
             placeholder="请输入店铺简介"
-            :auto-size="{ minRows: 5 }"
+            :auto-size="{ minRows: 7 }"
             :max-length="200"
             show-word-limit
             allow-clear>
           </a-textarea>
           <template #extra>
-            <a-space>
-              <a-row :gutter="8">
+            <a-row>
+              <a-col :span="12">
+                <a-input
+                  v-model="simpleIntroText"
+                  placeholder="输入简介关键词"
+                  allow-clear
+                >
+                </a-input>
+              </a-col>
+            </a-row>
+            <a-space style="margin-top: 10px;">
+              <a-row>
                 <a-col :span="12">
-                  <a-input
-                    v-model.trim="simpleIntroText"
-                    placeholder="输入简介关键词"
-                    allow-clear
-                  >
-                  </a-input>
-                </a-col>
-                <a-col :span="4">
                   <a-button
-                    style="width: 200px"
                     type="primary"
                     status="danger"
-                    @click="aiGenShopDesc"
+                    @click="validateAIGenShopDesc('normal')"
                     :loading="aiGenLoading"
                   >
                     {{ aiBtnText }}
+                  </a-button>
+                </a-col>
+                <a-col :span="12">
+                  <a-button
+                    type="primary"
+                    @click="validateAIGenShopDesc('stream')"
+                    :loading="aiGenLoadingStream"
+                  >
+                    AI一键生成店铺简介（流式）
                   </a-button>
                 </a-col>
               </a-row>
@@ -246,11 +256,12 @@
 </template>
 
 <script setup>
-  import { ref, reactive, watch } from 'vue'
+  import { ref, reactive, watch, onUnmounted } from 'vue'
   import { useRouter, useRoute } from "vue-router"
   import { getNowCity, placeSearch } from '@api/common'
   import { getCategory, getDetail, addShop, updateShop, genShopDesc } from '@api/shop'
-  import { Message } from '@arco-design/web-vue';
+  import { fetchSSEStream } from '@utils/SSE'
+  import { Message, Modal } from '@arco-design/web-vue';
   import ImgUpload from '@components/ImgUpload/index.vue'
 
   const router = useRouter()
@@ -299,8 +310,10 @@
   })
   const simpleIntroText = ref('')
   const aiGenLoading = ref(false)
+  const aiGenLoadingStream = ref(false)
   const aiBtnText = ref('AI一键生成店铺简介')
   let typingTimer = null
+  let streamTypewriter = null
 
   watch(aiGenLoading, (val) => {
     if (val) {
@@ -321,9 +334,6 @@
       aiBtnText.value = 'AI一键生成店铺简介'
     }
   })
-
-
-
 
   /**
    * 添加满减优惠
@@ -420,15 +430,51 @@
     return res
   }
 
-  /**
-   * 一键生成店铺简介
-   */
-  async function aiGenShopDesc () {
+  // type normal/stream
+  function validateAIGenShopDesc (type = 'normal') {
+    const conf = {
+      normal: {
+        loadingVar: aiGenLoading,
+        title: '已有关键词内容将被覆盖，确认一键生成店铺简介吗',
+        okCB: aiGenShopDesc
+      },
+      stream: {
+        loadingVar: aiGenLoadingStream,
+        title: '已有关键词内容将被覆盖，确认流式生成店铺简介吗',
+        okCB: aiGenShopDescStream
+      }
+    }
+    const typeConfig = conf[type] ?? {}
     const keyword = `${simpleIntroText.value} ${shopInfo.name}`
+
+    if (typeConfig.loadingVar?.value) return
     if (!simpleIntroText.value) {
       Message.error('请输入店铺简介关键词便于ai生成！')
       return
     }
+
+    const doGenerate = () => {
+      shopInfo.intro_text = ''
+      typeConfig.okCB(keyword)
+    }
+
+    if (shopInfo.intro_text) {
+      Modal.confirm({
+        title: typeConfig.title,
+        okText: '确认',
+        okType: 'danger',
+        onOk: doGenerate
+      })
+    } else {
+      doGenerate()
+    }
+  }
+
+  /**
+   * 一键生成店铺简介
+   */
+  async function aiGenShopDesc (keyword) {
+    if (!keyword) return
 
     try {
       aiGenLoading.value = true
@@ -440,10 +486,142 @@
       })
       const aiResultDesc = res?.data?.description ?? res?.data?.keyword ?? ''
       shopInfo.intro_text = aiResultDesc
+    } catch (err) {
+      Message.error(err.message || 'AI 生成失败')
+      console.error('AI genShopDesc error:', err)
     } finally {
       aiGenLoading.value = false
     }
   }
+
+  /**
+   * 打字机渲染器：按固定节奏消费文本缓冲区，带光标闪烁效果
+   * 与数据源解耦——外部只需调用 append 写入、complete 通知结束
+   * @param { (text: string) => void } setText 文本回显函数
+   * @param { object } options 配置项
+   * @returns {{ append: Function, complete: Function, destroy: Function }}
+   */
+  function createTypewriter (setText, options = {}) {
+    const { charDelay = 60, blinkDelay = 500, cursor = '|' } = options
+
+    let fullText = ''        // 收到的完整文本（缓冲区）
+    let displayedLength = 0  // 已展示的字符数
+    let cursorVisible = true // 光标可见性
+    let lastOutputTime = 0   // 上一次输出字符的时间戳
+    let isComplete = false   // 数据源是否结束
+    let rafId = null
+    let finishResolve = null
+
+    const finishPromise = new Promise((resolve) => {
+      finishResolve = resolve
+    })
+
+    function render () {
+      const shown = fullText.substring(0, displayedLength)
+      const isFinished = isComplete && displayedLength >= fullText.length
+      setText(isFinished ? shown : shown + (cursorVisible ? cursor : ''))
+    }
+
+    // 渲染循环：每帧同步展示进度与光标，保证闪烁效果实时生效
+    function tick (now) {
+      if (displayedLength < fullText.length) {
+        // 控制展示节奏：距上次输出满 charDelay 才追加一个字符
+        if (now - lastOutputTime >= charDelay) {
+          displayedLength += 1
+          lastOutputTime = now
+        }
+        render()
+        rafId = requestAnimationFrame(tick)
+      } else if (isComplete) {
+        // 数据源结束且所有字符已展示，移除光标收尾
+        render()
+        finishResolve()
+      } else {
+        // 缓冲区已消费完但数据源未结束，仅同步光标闪烁状态
+        render()
+        rafId = requestAnimationFrame(tick)
+      }
+    }
+    rafId = requestAnimationFrame(tick)
+
+    // 光标闪烁：翻转可见性（下一帧渲染时生效）
+    const blinkTimer = setInterval(() => {
+      cursorVisible = !cursorVisible
+    }, blinkDelay)
+
+    return {
+      /** 追加新收到的文本到缓冲区 */
+      append (text) {
+        if (text) fullText += text
+      },
+      /** 通知数据源结束，返回的 Promise 在全部文字展示完毕后 resolve */
+      complete () {
+        isComplete = true
+        return finishPromise
+      },
+      /** 销毁：停止渲染与定时器，回显完整文本（去除光标），可重复调用 */
+      destroy () {
+        clearInterval(blinkTimer)
+        if (rafId) {
+          cancelAnimationFrame(rafId)
+          rafId = null
+        }
+        setText(fullText)
+      }
+    }
+  }
+
+  /**
+   * 一键生成店铺简介（流式版）：编排 stream 拉取与打字机回显
+   */
+  async function aiGenShopDescStream (keyword) {
+    if (!keyword) return
+
+    streamTypewriter = createTypewriter((text) => {
+      if (text) {
+        shopInfo.intro_text = text
+      }
+    })
+
+    try {
+      aiGenLoadingStream.value = true
+
+      await fetchSSEStream(
+        `/admin/auth/ai/genShopDesc?keyword=${encodeURIComponent(keyword)}&stream=true`,
+        (eventData) => {
+          switch (eventData.event) {
+            case 'start':
+              console.log('AI 开始生成:', eventData.model)
+              break
+            case 'delta':
+              streamTypewriter.append(eventData.text ?? '')
+              break
+            case 'done':
+              console.log('AI 生成完成:', eventData.description)
+              return false // 停止读取
+            case 'error':
+              throw new Error(eventData.msg)
+          }
+        },
+        { credentials: 'include' }
+      )
+
+      // 等待打字机把缓冲区剩余内容展示完毕
+      await streamTypewriter.complete()
+    } catch (err) {
+      Message.error(err.message || 'AI 生成失败')
+      console.error('AI genShopDescStream error:', err)
+    } finally {
+      streamTypewriter?.destroy()
+      streamTypewriter = null
+      aiGenLoadingStream.value = false
+    }
+  }
+
+  onUnmounted(() => {
+    streamTypewriter?.destroy()
+    streamTypewriter = null
+  })
 
   async function preGetDetail () {
     if (shopId) {
