@@ -122,6 +122,26 @@ export const asyncRouterMap = [
         component: () => import('@pages/goods/categoryList.vue')
       }
     ]
+  },
+  {
+    path: "/coupon",
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        meta: {
+          title: '优惠券列表'
+        },
+        component: () => import('@pages/coupon/index.vue')
+      },
+      {
+        path: 'detail',
+        meta: {
+          title: '优惠券配置'
+        },
+        component: () => import('@pages/coupon/detail.vue')
+      }
+    ]
   }
 ];
 
