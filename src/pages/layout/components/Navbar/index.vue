@@ -13,17 +13,22 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { userStore } from '@store/user'
   import { useRouter } from 'vue-router'
 
+  interface UserInfo {
+    username?: string
+    [key: string]: any
+  }
+
   const store = userStore()
   const router = useRouter()
-  const props = defineProps({
-    user: Object
-  })
+  const props = defineProps<{
+    user?: UserInfo
+  }>()
   const { user } = props
-  const handleSelect = (type) => {
+  const handleSelect = (type: string | number | Record<string, any> | undefined) => {
     if (type === 'logout') {
       store.logout()
         .then(() => {

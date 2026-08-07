@@ -1,6 +1,7 @@
 import request from '@utils/request'
+import type { CouponParams } from '../types'
 
-export function getCouponList (params) {
+export function getCouponList(params?: CouponParams) {
   return request({
     url: '/admin/auth/coupon/list',
     method: 'get',
@@ -8,7 +9,7 @@ export function getCouponList (params) {
   })
 }
 
-export function getCouponDetail (params) {
+export function getCouponDetail(params: Record<string, any>) {
   return request({
     url: '/admin/auth/coupon/detail',
     method: 'get',
@@ -16,7 +17,7 @@ export function getCouponDetail (params) {
   })
 }
 
-export function addCoupon (data) {
+export function addCoupon(data: Record<string, any>) {
   return request({
     url: '/admin/auth/coupon/add',
     method: 'post',
@@ -24,7 +25,7 @@ export function addCoupon (data) {
   })
 }
 
-export function updateCoupon (data) {
+export function updateCoupon(data: Record<string, any>) {
   return request({
     url: '/admin/auth/coupon/update',
     method: 'post',
@@ -32,7 +33,7 @@ export function updateCoupon (data) {
   })
 }
 
-export function deleteCoupon (data) {
+export function deleteCoupon(data: Record<string, any>) {
   return request({
     url: '/admin/auth/coupon/delete',
     method: 'post',

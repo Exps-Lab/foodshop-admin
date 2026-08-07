@@ -55,24 +55,30 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { Message } from '@arco-design/web-vue'
 import { getCouponDetail, addCoupon, updateCoupon } from '@api/coupon'
+
+interface CouponForm {
+  title: string
+  base_val: number
+  valid_time: number[]
+}
 
 const router = useRouter()
 const route = useRoute()
 const isDisabled = Boolean(route.query.view || false)
 const couponId = Number(route.query.coupon_id || '')
 
-const couponInfo = reactive({
+const couponInfo = reactive<CouponForm>({
   title: '',
   base_val: 0,
   valid_time: []
 })
 
-const handleSubmit = async (data) => {
+const handleSubmit = async (data: CouponForm) => {
   const [valid_start, valid_end] = data.valid_time || []
   const payload = {
     title: data.title,

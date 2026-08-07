@@ -51,17 +51,38 @@
   </a-form>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import { Message } from '@arco-design/web-vue'
 import { getMenuDetail, addMenu, updateMenu, getRoleList } from '@api/menu/index'
 
+interface RoleOption {
+  role_id: number
+  role: number
+  role_name: string
+}
+
+interface ChildMenu {
+  path: string
+  label: string
+  icon: string
+}
+
+interface MenuForm {
+  path: string
+  label: string
+  icon: string
+  role: number
+  is_hidden: boolean
+  children: ChildMenu[]
+}
+
 const route = useRoute()
 const id = Number(route.query.id)
 const isDisabled = Boolean(route.query.view)
-let roleOptions = ref([])
-const form = reactive({
+const roleOptions = ref<RoleOption[]>([])
+const form = reactive<MenuForm>({
   path: '',
   label: '',
   icon: '',
@@ -72,7 +93,7 @@ const form = reactive({
 const getData = () => {
   getMenuDetail({ id }).then(res => {
     Object.keys(form).forEach(key => {
-      form[key] = res.data[key]
+      (form as any)[key] = res.data[key]
     })
   })
 }
@@ -88,10 +109,10 @@ const addChild = () => {
     icon: ''
   })
 }
-const deleteChild = (index) => {
+const deleteChild = (index: number) => {
   form.children.splice(index, 1)
 }
-const handleSubmit = async (data) => {
+const handleSubmit = async (data: any) => {
   if (id) {
     await updateMenu({
       id,

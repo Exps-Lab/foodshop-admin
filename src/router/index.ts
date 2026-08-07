@@ -1,13 +1,21 @@
-import { createRouter, createWebHashHistory } from "vue-router";
-import { markRaw } from 'vue'
-import LayoutComponent from "../pages/layout/Layout.vue";
+import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router'
+import { markRaw  } from 'vue'
+import LayoutComponent from '@pages/layout/Layout.vue'
+
 const Layout = markRaw(LayoutComponent)
 
-export const constantRouterMap = [
+// 路由元信息类型扩展
+declare module 'vue-router' {
+  interface RouteMeta {
+    title?: string
+  }
+}
+
+export const constantRouterMap: RouteRecordRaw[] = [
   {
-    path: "/",
+    path: '/',
     component: Layout,
-    redirect: "/dashboard",
+    redirect: '/dashboard',
     children: [
       {
         path: 'dashboard',
@@ -24,19 +32,19 @@ export const constantRouterMap = [
     component: () => import('@pages/login/index.vue')
   },
   {
-    path: "/noAuth",
+    path: '/noAuth',
     name: 'noAuth',
     component: Layout,
     children: [
       {
-        path: "index",
-        component: () => import("@pages/noAuth/index.vue")
+        path: 'index',
+        component: () => import('@pages/noAuth/index.vue')
       }
     ]
   }
-];
+]
 
-export const asyncRouterMap = [
+export const asyncRouterMap: RouteRecordRaw[] = [
   {
     path: '/user',
     component: Layout,
@@ -49,12 +57,12 @@ export const asyncRouterMap = [
         meta: {
           title: '用户列表'
         },
-        component: () => import('@pages/userList/index.vue'),
+        component: () => import('@pages/userList/index.vue')
       }
     ]
   },
   {
-    path: "/menu",
+    path: '/menu',
     component: Layout,
     meta: {
       title: '菜单管理'
@@ -72,12 +80,12 @@ export const asyncRouterMap = [
         meta: {
           title: '菜单配置'
         },
-        component: () => import('@pages/menu/detail.vue'),
+        component: () => import('@pages/menu/detail.vue')
       }
     ]
   },
   {
-    path: "/shop",
+    path: '/shop',
     component: Layout,
     children: [
       {
@@ -97,7 +105,7 @@ export const asyncRouterMap = [
     ]
   },
   {
-    path: "/goods",
+    path: '/goods',
     component: Layout,
     children: [
       {
@@ -124,7 +132,7 @@ export const asyncRouterMap = [
     ]
   },
   {
-    path: "/coupon",
+    path: '/coupon',
     component: Layout,
     children: [
       {
@@ -143,12 +151,14 @@ export const asyncRouterMap = [
       }
     ]
   }
-];
+]
 
-export const noAuthRouter = { path: '/:pathMatch(.*)*', redirect: '/noAuth/index' }
+export const noAuthRouter: RouteRecordRaw = { path: '/:pathMatch(.*)*', redirect: '/noAuth/index' }
 
-export default createRouter({
+const router = createRouter({
   scrollBehavior: () => ({ top: 0 }),
   history: createWebHashHistory(),
   routes: constantRouterMap
 })
+
+export default router

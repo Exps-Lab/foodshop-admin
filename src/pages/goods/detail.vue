@@ -122,6 +122,7 @@
       </a-form-item>
     </a-form>
 
+    <!-- eslint-disable vue/no-v-model-argument -->
     <a-modal
       v-model:visible="specConf.modalVisible"
       :footer="false"
@@ -149,12 +150,35 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { reactive } from 'vue'
-  import { useRouter, useRoute } from "vue-router"
+  import { useRouter, useRoute } from 'vue-router'
   import { getCategory, getDetail, addGoods, updateGoods } from '@api/goods'
-  import { Message } from '@arco-design/web-vue';
+  import { Message } from '@arco-design/web-vue'
   import ImgUpload from '@components/ImgUpload/index.vue'
+
+  interface SpecItem {
+    name: string
+    packing_fee: number
+    price: number
+    stock: number
+  }
+
+  interface GoodsInfo {
+    name: string
+    food_category_id: string | number
+    food_category_name: string
+    food_category_desc: string
+    description: string
+    material: string
+    measure: string
+    image_path: string
+    is_discount: boolean
+    discount_val: number
+    attrs: string[]
+    specfoods: SpecItem[]
+    [key: string]: any
+  }
 
   const router = useRouter()
   const route = useRoute()
@@ -162,36 +186,16 @@
   const shopId = Number(route.query.shop_id || '')
   const goodsId = Number(route.query.goods_id || '')
 
-
-  //商品规格相关
+  // 商品规格相关
   const specConf = reactive({
     columns: [
-    {
-      title: '规格名称',
-      dataIndex: 'name',
-      slotName: 'name',
-      width: 150
-    },{
-      title: '包装费',
-      dataIndex: 'packing_fee',
-      slotName: 'packing_fee',
-      width: 100
-    },{
-      title: '价格',
-      dataIndex: 'price',
-      slotName: 'price',
-      width: 100
-    },{
-      title: '库存',
-      dataIndex: 'stock',
-      slotName: 'stock',
-      width: 100
-    },{
-      title: '操作',
-      slotName: 'optional',
-      width: 160
-    }],
-    editSpecName: '', // 当前编辑的规格name
+      { title: '规格名称', dataIndex: 'name', slotName: 'name', width: 150 },
+      { title: '包装费', dataIndex: 'packing_fee', slotName: 'packing_fee', width: 100 },
+      { title: '价格', dataIndex: 'price', slotName: 'price', width: 100 },
+      { title: '库存', dataIndex: 'stock', slotName: 'stock', width: 100 },
+      { title: '操作', slotName: 'optional', width: 160 }
+    ],
+    editSpecName: '',
     modalVisible: false,
     modalEditSpec: {
       name: '',
@@ -200,20 +204,22 @@
       stock: 1000
     }
   })
-  function validateSpecName (value, callback) {
-    let { specfoods:data } = goodsInfo
-    let temp = data.filter(item => item.name === value)
+
+  function validateSpecName(value: string, callback: (msg?: string) => void) {
+    const { specfoods: data } = goodsInfo
+    const temp = data.filter(item => item.name === value)
     if (temp.length) {
       callback('商品规格名不能重复!')
     }
     callback()
   }
-  function beforeSpecSave () {
-    let { modalEditSpec, editSpecName } = specConf
-    let { specfoods:data } = goodsInfo
+
+  function beforeSpecSave() {
+    const { modalEditSpec, editSpecName } = specConf
+    const { specfoods: data } = goodsInfo
 
     if (editSpecName) {
-      for (let i=0; i<data.length; i++) {
+      for (let i = 0; i < data.length; i++) {
         if (data[i].name === editSpecName) {
           data[i] = Object.assign(data[i], modalEditSpec)
         }
@@ -223,20 +229,23 @@
     }
     beforeSpecHide()
   }
+
   function beforeSpecHide() {
     initSpecModal()
     specConf.modalVisible = false
   }
-  function showSpecModal(data) {
+
+  function showSpecModal(data?: SpecItem) {
     if (data) {
-      specConf.modalEditSpec =Object.assign(specConf.modalEditSpec, data)
+      specConf.modalEditSpec = Object.assign(specConf.modalEditSpec, data)
       specConf.editSpecName = data.name
     } else {
       specConf.editSpecName = ''
     }
     specConf.modalVisible = true
   }
-  function initSpecModal () {
+
+  function initSpecModal() {
     specConf.modalEditSpec = Object.assign(specConf.modalEditSpec, {
       name: '',
       packing_fee: 1,
@@ -244,19 +253,20 @@
       stock: 1000
     })
   }
-  function handleSpecDelete(data, index) {
+
+  function handleSpecDelete(_data: SpecItem, index: number) {
     goodsInfo.specfoods.splice(index, 1)
   }
 
-
-  //商品分类搜索相关
+  // 商品分类搜索相关
   const searchControl = reactive({
     loading: false,
-    option: [],
+    option: [] as any[],
     pageNum: 1,
     pageSize: 10000
   })
-  async function handleSearch(val) {
+
+  async function handleSearch(val?: string) {
     searchControl.loading = true
     const res = await getCategory({
       shop_id: shopId,
@@ -270,21 +280,21 @@
     searchControl.loading = false
   }
 
-
-  //图片相关
-  const picFileList = reactive({
+  // 图片相关
+  const picFileList = reactive<{ goods_pic: Array<{ name?: string; url: string }> }>({
     goods_pic: []
   })
-  function imgUploadFinish(data) {
+
+  function imgUploadFinish(data: { url?: string }) {
     goodsInfo.image_path = data.url || ''
   }
+
   function removeImg() {
     goodsInfo.image_path = ''
   }
 
-
   // 表单相关
-  let goodsInfo = reactive({
+  let goodsInfo = reactive<GoodsInfo>({
     name: '',
     food_category_id: '',
     food_category_name: '',
@@ -303,7 +313,8 @@
       stock: 1000
     }]
   })
-  async function handleSubmit (data) {
+
+  async function handleSubmit(data: any) {
     if (goodsId) {
       await updateGoods({
         id: goodsId,
@@ -320,23 +331,24 @@
     handleCancel()
   }
 
-
   // init
-  async function preGetDetail () {
+  async function preGetDetail() {
     if (goodsId) {
-      const res = await getDetail({id: goodsId})
+      const res = await getDetail({ id: goodsId })
       const shop_image = res.data.image_path
       goodsInfo = Object.assign(goodsInfo, res.data)
       picFileList.goods_pic.push({
-        name: shop_image.split('/').at(-1),
+        name: shop_image.split('/').pop(),
         url: shop_image
       })
     }
   }
+
   function handleCancel() {
     router.go(-1)
   }
-  async function init () {
+
+  async function init() {
     handleSearch('')
     preGetDetail()
   }

@@ -48,40 +48,51 @@
   </a-space>
 </template>
 
-<script setup>
-import axios from "axios"
+<script setup lang="ts">
+import axios from 'axios'
 import { uploadToken } from '@api/common/index'
+import type { FileItem, RequestOption } from '@arco-design/web-vue'
+
+interface UploadResult {
+  key: string
+  hash: string
+  url: string
+}
+
+interface FileListItem {
+  name?: string
+  url: string
+}
+
+withDefaults(defineProps<{
+  disabled?: boolean
+  acceptType?: string
+  limitNum?: number
+  fileList?: FileListItem[]
+}>(), {
+  disabled: false,
+  acceptType: 'image/jpeg,image/png,image/jpg',
+  limitNum: 1,
+  fileList: () => { return [] }
+})
+
+const emits = defineEmits<{
+  (e: 'imgUploadFinish', data: UploadResult): void
+  (e: 'removeImg', file: FileItem): void
+}>()
 
 const domain = 'https://upload-z1.qiniup.com'
 const qiniuAddr = 'static.foodshops.fun'
-defineProps({
-  disabled: {
-    type: Boolean,
-    default: false
-  },
-  acceptType: { // 支持接收的类型
-    type: String,
-    default: 'image/jpeg,image/png,image/jpg'
-  },
-  limitNum: {  // 最大支持上传图片总数量
-    type: Number,
-    default: 1
-  },
-  fileList: { //  默认文件列表
-    type: Array,
-    default: () => { return [] }
-  },
-})
-const emits = defineEmits(['imgUploadFinish', 'removeImg'])
 
-const qiniuRequest = async (option) => {
+const qiniuRequest = async (option: RequestOption) => {
   const { onProgress, onError, onSuccess, fileItem, name } = option
-  const extName = fileItem.name.split('.').at(-1)
+  const extName = fileItem.name!.split('.').pop()
   const keyname = randomString(15) + '.' + extName
   // 从后端获取上传凭证token
   const { data: token } = await uploadToken()
   const formData = new FormData()
-  formData.append(name || 'file', fileItem.file)
+  const fieldName = typeof name === 'function' ? name(fileItem) : (name || 'file')
+  formData.append(fieldName, fileItem.file!)
   formData.append('token', token)
   formData.append('key', keyname)
   // 获取到凭证以后再将文件上传到七牛云空间
@@ -89,25 +100,27 @@ const qiniuRequest = async (option) => {
     headers: { 'Content-Type': 'multipart/form-data' },
     onUploadProgress: event => {
       // 上传进度
-      let percent
+      let percent: number | undefined
       if (event.total > 0) {
         percent = event.loaded / event.total
       }
-      onProgress(percent, event)
+      onProgress(percent)
     }
   })
-  if (res && res.status === 200){
+  if (res && res.status === 200) {
     const url = 'http://' + qiniuAddr + '/' + res.data.key
     emits('imgUploadFinish', { ...res.data, url })
     onSuccess(res.data)
   } else {
-    onError(res.msg)
+    onError(res.data?.msg || '上传失败')
   }
 }
-const handleRemove = (file) => {
+
+const handleRemove = (file: FileItem) => {
   emits('removeImg', file)
   return true
 }
+
 const randomString = (len = 32) => {
   const chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678'
   const maxPos = chars.length

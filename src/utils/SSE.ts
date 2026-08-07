@@ -7,11 +7,16 @@ const DATA_PREFIX = 'data:'
 
 /**
  * 读取并解析 SSE 响应体，逐个事件回调（内部实现，不对外暴露）
- * @param { Response } response fetch 响应对象
- * @param { (eventData: object | string) => (void | false) } onEvent 事件处理函数，返回 false 提前停止读取
  */
-async function readSSEStream (response, onEvent) {
-  const reader = response.body.getReader()
+async function readSSEStream(
+  response: Response,
+  onEvent: (eventData: object | string) => void | false
+): Promise<void> {
+  const reader = response.body?.getReader()
+  if (!reader) {
+    throw new Error('Response body is not readable')
+  }
+
   const decoder = new TextDecoder()
   let buffer = ''
 
@@ -23,7 +28,7 @@ async function readSSEStream (response, onEvent) {
     buffer += decoder.decode(value, { stream: true })
     // 按双换行符分割 SSE 事件块
     const chunks = buffer.split('\n\n')
-    buffer = chunks.pop() // 保留不完整的块在缓冲区中
+    buffer = chunks.pop() || '' // 保留不完整的块在缓冲区中
 
     for (const chunk of chunks) {
       // SSE 规范允许同一事件包含多行 data，以换行符拼接
@@ -34,7 +39,7 @@ async function readSSEStream (response, onEvent) {
       if (!data) continue
 
       // 优先按 JSON 解析，失败则回退为原始文本，由业务方自行处理
-      let eventData = data
+      let eventData: object | string = data
       try {
         eventData = JSON.parse(data)
       } catch (e) {
@@ -52,12 +57,12 @@ async function readSSEStream (response, onEvent) {
 
 /**
  * 发起 SSE 流式请求并读取事件
- * @param { string } url 请求地址
- * @param { (eventData: object | string) => (void | false) } onEvent 事件处理函数，返回 false 提前停止读取
- * @param { object } fetchOptions fetch 配置（headers、signal 等）
- * @returns { Promise<void> } 流读取完毕（或被 onEvent 提前终止）时 resolve
  */
-export async function fetchSSEStream (url, onEvent, fetchOptions = {}) {
+export async function fetchSSEStream(
+  url: string,
+  onEvent: (eventData: object | string) => void | false,
+  fetchOptions: RequestInit = {}
+): Promise<void> {
   const response = await fetch(url, {
     method: 'GET',
     ...fetchOptions

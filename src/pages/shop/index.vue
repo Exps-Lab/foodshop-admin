@@ -21,11 +21,19 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Message, Modal } from '@arco-design/web-vue'
 import { shopList, deleteShop } from '@api/shop'
+
+interface ShopItem {
+  id: number
+  name: string
+  address: string
+  category: string
+  phone: string
+}
 
 const router = useRouter()
 const columns = [
@@ -71,12 +79,12 @@ const pagination = reactive({
   current: 1,
   total: 0
 })
-const state = reactive({
+const state = reactive<{ data: ShopItem[] }>({
   data: []
 })
 
 const getList = async () => {
-  let shopRes = await shopList({
+  const shopRes = await shopList({
     page_num: pagination.current,
     page_size: pagination.pageSize
   })
@@ -84,15 +92,16 @@ const getList = async () => {
   state.data = list
   pagination.total = total
 }
-const handleView = (row) => {
+const handleView = (row: ShopItem) => {
   router.push(`/shop/detail?id=${row.id}&view=1`)
 }
-const handleEdit = (row) => {
+const handleEdit = (row: ShopItem) => {
   router.push(`/shop/detail?id=${row.id}`)
 }
-const handleDelete = (row) => {
+const handleDelete = (row: ShopItem) => {
   Modal.confirm({
     title: '确认要删除这家商铺吗？',
+    content: '',
     onOk: () => {
       deleteShop({ id: row.id }).then(() => {
         Message.success('删除成功！')
@@ -101,16 +110,16 @@ const handleDelete = (row) => {
     }
   })
 }
-const addGoods = (row) => {
+const addGoods = (row: ShopItem) => {
   router.push(`/goods/detail?shop_id=${row.id}`)
 }
-const showAllCategory = (row) => {
+const showAllCategory = (row: ShopItem) => {
   router.push(`/goods/categoryList?shop_id=${row.id}`)
 }
 const handleAdd = () => {
   router.push('/shop/detail')
 }
-const tableChange = (current) => {
+const tableChange = (current: number) => {
   pagination.current = current
   getList()
 }

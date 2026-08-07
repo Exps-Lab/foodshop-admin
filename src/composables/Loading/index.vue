@@ -4,16 +4,13 @@
   </div>
 </template>
 
-<script setup>
-import { defineProps } from 'vue'
-import { Spin } from '@arco-design/web-vue';
+<script setup lang="ts">
+import { Spin } from '@arco-design/web-vue'
 
-defineProps({
-  text: {
-    type: String,
-    default: 'loading...',
-    required: false
-  }
+withDefaults(defineProps<{
+  text?: string
+}>(), {
+  text: 'loading...'
 })
 </script>
 

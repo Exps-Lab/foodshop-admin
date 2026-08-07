@@ -4,7 +4,7 @@ import path from 'path'
 import { cssConf } from './viteConf'
 import eslint from 'vite-plugin-eslint'
 
-export default (params => {
+export default (params: { mode: string }) => {
   // 配置文件中加载环境变量
   const env = loadEnv(params.mode, __dirname)
   const { mode } = params
@@ -29,7 +29,7 @@ export default (params => {
       eslint({
         cache: false,
         // fix: true,
-        include: ['src/**/*.js', 'src/**/*.vue']
+        include: ['src/**/*.ts', 'src/**/*.vue']
       }),
     ],
     css: cssConf,
@@ -37,14 +37,14 @@ export default (params => {
       target: 'es2020',
       outDir: path.resolve(__dirname, './admin-user'),
     },
-    optimizedeps: {
-      esbuildoptions: {
+    optimizeDeps: {
+      esbuildOptions: {
         target: 'es2020'
       }
     },
     server: {
       host: '0.0.0.0',
-      port: env.VITE_PORT,
+      port: Number(env.VITE_PORT) || 8888,
       open: true,
       proxy: {
         '/admin': {
@@ -54,4 +54,4 @@ export default (params => {
       }
     },
   })
-})
+}

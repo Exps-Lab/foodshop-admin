@@ -255,35 +255,86 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { ref, reactive, watch, onUnmounted } from 'vue'
-  import { useRouter, useRoute } from "vue-router"
+  import { useRouter, useRoute } from 'vue-router'
   import { getNowCity, placeSearch } from '@api/common'
   import { getCategory, getDetail, addShop, updateShop, genShopDesc } from '@api/shop'
   import { fetchSSEStream } from '@utils/SSE'
-  import { Message, Modal } from '@arco-design/web-vue';
+  import { Message, Modal } from '@arco-design/web-vue'
   import ImgUpload from '@components/ImgUpload/index.vue'
+
+  interface PlaceOption {
+    address: string
+    title: string
+    location: { lat: string; lng: string }
+  }
+
+  interface CityInfo {
+    name: string
+    [key: string]: any
+  }
+
+  interface DiscountItem {
+    total_val: number
+    discount_val: number
+  }
+
+  interface ShopInfo {
+    name: string
+    address: string
+    pos: { lat: string; lng: string }
+    phone: string
+    intro_text: string
+    shop_mark: string
+    category: string
+    delivery_fee: number
+    mini_delivery_price: number
+    open_time: string[]
+    shop_image: Record<string, string>
+    has_discount: boolean
+    discount_Arr: DiscountItem[]
+    [key: string]: any
+  }
+
+  interface TypewriterOptions {
+    charDelay?: number
+    blinkDelay?: number
+    cursor?: string
+  }
+
+  interface Typewriter {
+    append: (text: string) => void
+    complete: () => Promise<void>
+    destroy: () => void
+  }
 
   const router = useRouter()
   const route = useRoute()
   const isDisabled = Boolean(route.query.view || false)
   const shopId = Number(route.query.id || '')
-  const searchControl = reactive({
+  const searchControl = reactive<{
+    searchText: string
+    loading: boolean
+    option: PlaceOption[]
+    total: number
+    pageNum: number
+  }>({
     searchText: '',
     loading: false,
     option: [],
     total: 0,
     pageNum: 1
   })
-  const picFileList = reactive({
+  const picFileList = reactive<Record<string, Array<{ name?: string; url: string }>>>({
     avatar: [],
     business_licence: [],
     food_licence: []
   })
-  let cityInfo = {}
-  let categoryOptions = ref([])
+  let cityInfo: CityInfo = { name: '' }
+  const categoryOptions = ref<any[]>([])
 
-  let shopInfo = reactive({
+  let shopInfo = reactive<ShopInfo>({
     name: '',
     address: '',
     pos: {
@@ -312,8 +363,8 @@
   const aiGenLoading = ref(false)
   const aiGenLoadingStream = ref(false)
   const aiBtnText = ref('AI一键生成店铺简介')
-  let typingTimer = null
-  let streamTypewriter = null
+  let typingTimer: ReturnType<typeof setInterval> | null = null
+  let streamTypewriter: Typewriter | null = null
 
   watch(aiGenLoading, (val) => {
     if (val) {
@@ -335,28 +386,21 @@
     }
   })
 
-  /**
-   * 添加满减优惠
-   * @param { number } index
-   */
-  const addDiscount = (index) => {
-    shopInfo.discount_Arr.splice(index+1, 0 , {
+  const addDiscount = (index: number) => {
+    shopInfo.discount_Arr.splice(index + 1, 0, {
       total_val: 0,
       discount_val: 0
     })
   }
-  /**
-   * 删除满减优惠
-   * @param { number } index
-   */
-  const deleteDiscount = (index) => {
+
+  const deleteDiscount = (index: number) => {
     shopInfo.discount_Arr.splice(index, 1)
   }
 
-  async function handleSearch(val) {
+  async function handleSearch(val?: string) {
     searchControl.loading = true
-    val ? searchControl.searchText = val : false
-    val && val !== shopInfo.address ? searchControl.pageNum = 1 : false
+    if (val) searchControl.searchText = val
+    if (val && val !== shopInfo.address) searchControl.pageNum = 1
 
     const res = await placeSearch({
       keyword: val || searchControl.searchText,
@@ -370,13 +414,13 @@
     searchControl.loading = false
   }
 
-  function controlSearchPage(nowPage) {
+  function controlSearchPage(nowPage: number) {
     searchControl.pageNum = nowPage
     handleSearch()
   }
 
-  function searchChange(val) {
-    for (let item of searchControl.option) {
+  function searchChange(val: string) {
+    for (const item of searchControl.option) {
       if (item.address + ' ' + item.title === val) {
         shopInfo.pos.lat = item.location.lat
         shopInfo.pos.lng = item.location.lng
@@ -384,19 +428,19 @@
     }
   }
 
-  function imgUploadFinish(data, type) {
-    shopInfo.shop_image[type] !== undefined
-      ? shopInfo.shop_image[type] = data.url || ''
-      : false
+  function imgUploadFinish(data: { url?: string }, type: string) {
+    if (shopInfo.shop_image[type] !== undefined) {
+      shopInfo.shop_image[type] = data.url || ''
+    }
   }
 
-  function removeImg(file, type) {
-    shopInfo.shop_image[type] !== undefined
-      ? shopInfo.shop_image[type] = ''
-      : false
+  function removeImg(_file: any, type: string) {
+    if (shopInfo.shop_image[type] !== undefined) {
+      shopInfo.shop_image[type] = ''
+    }
   }
 
-  async function handleSubmit (data) {
+  async function handleSubmit(data: any) {
     if (shopId) {
       await updateShop({
         id: shopId,
@@ -413,15 +457,15 @@
     router.go(-1)
   }
 
-  function filterCategory (data, res, level) {
-    for (let item of data) {
+  function filterCategory(data: any[], res: any[], level: number): any[] {
+    for (const item of data) {
       if (item.id !== undefined && item.level === level) {
-        const { sub_categories = [], ...data } = item
+        const { sub_categories = [], ...rest } = item
         if (sub_categories.length) {
           level++
-          data.children = filterCategory(sub_categories, [], level)
+          (rest as any).children = filterCategory(sub_categories, [], level)
           level--
-          res.push(data)
+          res.push(rest)
         } else {
           res.push(item)
         }
@@ -430,9 +474,8 @@
     return res
   }
 
-  // type normal/stream
-  function validateAIGenShopDesc (type = 'normal') {
-    const conf = {
+  function validateAIGenShopDesc(type: 'normal' | 'stream' = 'normal') {
+    const conf: Record<string, { loadingVar: any; title: string; okCB: (keyword: string) => void }> = {
       normal: {
         loadingVar: aiGenLoading,
         title: '已有关键词内容将被覆盖，确认一键生成店铺简介吗',
@@ -444,7 +487,7 @@
         okCB: aiGenShopDescStream
       }
     }
-    const typeConfig = conf[type] ?? {}
+    const typeConfig = conf[type] ?? { loadingVar: ref(false), title: '', okCB: () => {} }
     const keyword = `${simpleIntroText.value} ${shopInfo.name}`
 
     if (typeConfig.loadingVar?.value) return
@@ -461,6 +504,7 @@
     if (shopInfo.intro_text) {
       Modal.confirm({
         title: typeConfig.title,
+        content: '',
         okText: '确认',
         okType: 'danger',
         onOk: doGenerate
@@ -470,10 +514,7 @@
     }
   }
 
-  /**
-   * 一键生成店铺简介
-   */
-  async function aiGenShopDesc (keyword) {
+  async function aiGenShopDesc(keyword: string) {
     if (!keyword) return
 
     try {
@@ -486,7 +527,7 @@
       })
       const aiResultDesc = res?.data?.description ?? res?.data?.keyword ?? ''
       shopInfo.intro_text = aiResultDesc
-    } catch (err) {
+    } catch (err: any) {
       Message.error(err.message || 'AI 生成失败')
       console.error('AI genShopDesc error:', err)
     } finally {
@@ -494,38 +535,29 @@
     }
   }
 
-  /**
-   * 打字机渲染器：按固定节奏消费文本缓冲区，带光标闪烁效果
-   * 与数据源解耦——外部只需调用 append 写入、complete 通知结束
-   * @param { (text: string) => void } setText 文本回显函数
-   * @param { object } options 配置项
-   * @returns {{ append: Function, complete: Function, destroy: Function }}
-   */
-  function createTypewriter (setText, options = {}) {
+  function createTypewriter(setText: (text: string) => void, options: TypewriterOptions = {}): Typewriter {
     const { charDelay = 60, blinkDelay = 500, cursor = '|' } = options
 
-    let fullText = ''        // 收到的完整文本（缓冲区）
-    let displayedLength = 0  // 已展示的字符数
-    let cursorVisible = true // 光标可见性
-    let lastOutputTime = 0   // 上一次输出字符的时间戳
-    let isComplete = false   // 数据源是否结束
-    let rafId = null
-    let finishResolve = null
+    let fullText = ''
+    let displayedLength = 0
+    let cursorVisible = true
+    let lastOutputTime = 0
+    let isComplete = false
+    let rafId: number | null = null
+    let finishResolve: (() => void) | null = null
 
-    const finishPromise = new Promise((resolve) => {
+    const finishPromise = new Promise<void>((resolve) => {
       finishResolve = resolve
     })
 
-    function render () {
+    function render() {
       const shown = fullText.substring(0, displayedLength)
       const isFinished = isComplete && displayedLength >= fullText.length
       setText(isFinished ? shown : shown + (cursorVisible ? cursor : ''))
     }
 
-    // 渲染循环：每帧同步展示进度与光标，保证闪烁效果实时生效
-    function tick (now) {
+    function tick(now: number) {
       if (displayedLength < fullText.length) {
-        // 控制展示节奏：距上次输出满 charDelay 才追加一个字符
         if (now - lastOutputTime >= charDelay) {
           displayedLength += 1
           lastOutputTime = now
@@ -533,34 +565,28 @@
         render()
         rafId = requestAnimationFrame(tick)
       } else if (isComplete) {
-        // 数据源结束且所有字符已展示，移除光标收尾
         render()
-        finishResolve()
+        finishResolve?.()
       } else {
-        // 缓冲区已消费完但数据源未结束，仅同步光标闪烁状态
         render()
         rafId = requestAnimationFrame(tick)
       }
     }
     rafId = requestAnimationFrame(tick)
 
-    // 光标闪烁：翻转可见性（下一帧渲染时生效）
     const blinkTimer = setInterval(() => {
       cursorVisible = !cursorVisible
     }, blinkDelay)
 
     return {
-      /** 追加新收到的文本到缓冲区 */
-      append (text) {
+      append(text: string) {
         if (text) fullText += text
       },
-      /** 通知数据源结束，返回的 Promise 在全部文字展示完毕后 resolve */
-      complete () {
+      complete() {
         isComplete = true
         return finishPromise
       },
-      /** 销毁：停止渲染与定时器，回显完整文本（去除光标），可重复调用 */
-      destroy () {
+      destroy() {
         clearInterval(blinkTimer)
         if (rafId) {
           cancelAnimationFrame(rafId)
@@ -571,10 +597,7 @@
     }
   }
 
-  /**
-   * 一键生成店铺简介（流式版）：编排 stream 拉取与打字机回显
-   */
-  async function aiGenShopDescStream (keyword) {
+  async function aiGenShopDescStream(keyword: string) {
     if (!keyword) return
 
     streamTypewriter = createTypewriter((text) => {
@@ -588,17 +611,17 @@
 
       await fetchSSEStream(
         `/admin/auth/ai/genShopDesc?keyword=${encodeURIComponent(keyword)}&stream=true`,
-        (eventData) => {
+        (eventData: any) => {
           switch (eventData.event) {
             case 'start':
               console.log('AI 开始生成:', eventData.model)
               break
             case 'delta':
-              streamTypewriter.append(eventData.text ?? '')
+              streamTypewriter!.append(eventData.text ?? '')
               break
             case 'done':
               console.log('AI 生成完成:', eventData.description)
-              return false // 停止读取
+              return false
             case 'error':
               throw new Error(eventData.msg)
           }
@@ -606,9 +629,8 @@
         { credentials: 'include' }
       )
 
-      // 等待打字机把缓冲区剩余内容展示完毕
       await streamTypewriter.complete()
-    } catch (err) {
+    } catch (err: any) {
       Message.error(err.message || 'AI 生成失败')
       console.error('AI genShopDescStream error:', err)
     } finally {
@@ -623,26 +645,26 @@
     streamTypewriter = null
   })
 
-  async function preGetDetail () {
+  async function preGetDetail() {
     if (shopId) {
       const res = await getDetail({ id: shopId })
       const shop_image = res.data.shop_image
       shopInfo = Object.assign(shopInfo, res.data)
-      Object.keys(shop_image).forEach(key => {
+      Object.keys(shop_image).forEach((key: string) => {
         picFileList[key].push({
-          name: shop_image[key].split('/').at(-1),
+          name: shop_image[key].split('/').pop(),
           url: shop_image[key]
         })
       })
     }
   }
 
-  async function init () {
+  async function init() {
     preGetDetail()
     getNowCity().then(({ data }) => {
       cityInfo = data
     })
-    let categoryTemp = await getCategory()
+    const categoryTemp = await getCategory()
     categoryOptions.value = filterCategory(categoryTemp.data, [], 1)
   }
 

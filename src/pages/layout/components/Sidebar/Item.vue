@@ -15,14 +15,21 @@
   </div>
 </template>
 
-<script setup>
-import { computed } from "vue"
+<script setup lang="ts">
+import { computed } from 'vue'
 
-const props = defineProps({
-  route: Object
-})
+interface MenuItem {
+  label: string
+  path: string
+  icon?: string
+  children?: MenuItem[]
+}
+
+const props = defineProps<{
+  route: MenuItem
+}>()
 const { route } = props
-const hasChild = computed(() => route.children?.length > 0)
+const hasChild = computed(() => (route.children?.length ?? 0) > 0)
 </script>
 
 <style lang="less" scoped>

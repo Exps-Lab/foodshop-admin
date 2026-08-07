@@ -1,11 +1,12 @@
-import { createApp, ref } from 'vue'
+import { createApp, ref, type Ref } from 'vue'
+import type { App } from 'vue'
 import Loading from './index.vue'
 
 export default function useLoading() {
-  let LoadingIns = ref(null)
-  const container = document.createElement("div")
+  const LoadingIns: Ref<App | null> = ref(null)
+  const container = document.createElement('div')
   document.body.appendChild(container)
-  
+
   const showLoading = (text = '加载中...') => {
     LoadingIns.value = createApp(Loading, {
       text

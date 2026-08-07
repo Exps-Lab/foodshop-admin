@@ -1,13 +1,14 @@
 import request from '@utils/request'
+import type { ShopParams, GenShopDescParams } from '../types'
 
-export function getCategory () {
+export function getCategory() {
   return request({
     url: '/admin/noauth/shop/category',
     method: 'get'
   })
 }
 
-export function shopList (params) {
+export function shopList(params?: ShopParams) {
   return request({
     url: '/admin/auth/shop/list',
     method: 'get',
@@ -15,7 +16,7 @@ export function shopList (params) {
   })
 }
 
-export function getDetail (params) {
+export function getDetail(params: Record<string, any>) {
   return request({
     url: '/admin/auth/shop/detail',
     method: 'get',
@@ -23,7 +24,7 @@ export function getDetail (params) {
   })
 }
 
-export function addShop (data) {
+export function addShop(data: Record<string, any>) {
   return request({
     url: '/admin/auth/shop/add',
     method: 'post',
@@ -31,7 +32,7 @@ export function addShop (data) {
   })
 }
 
-export function updateShop (data) {
+export function updateShop(data: Record<string, any>) {
   return request({
     url: '/admin/auth/shop/update',
     method: 'post',
@@ -39,7 +40,7 @@ export function updateShop (data) {
   })
 }
 
-export function deleteShop (data) {
+export function deleteShop(data: Record<string, any>) {
   return request({
     url: '/admin/auth/shop/delete',
     method: 'post',
@@ -47,7 +48,7 @@ export function deleteShop (data) {
   })
 }
 
-export function genShopDesc (params, selfConfig) {
+export function genShopDesc(params: GenShopDescParams, selfConfig?: Record<string, any>) {
   return request({
     url: '/admin/auth/ai/genShopDesc',
     method: 'get',

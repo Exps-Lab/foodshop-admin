@@ -9,7 +9,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { Navbar, Sidebar, Breadcrumb, AppMain } from './components'
   import { authStore } from '@store/auth'
   import { userStore } from '@store/user'

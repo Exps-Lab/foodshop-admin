@@ -1,6 +1,7 @@
 import autoprefixer from 'autoprefixer'
+import type { UserConfig } from 'vite'
 
-export default {
+const cssConf: UserConfig['css'] = {
   preprocessorOptions: {
     less: {
       // 引入SASS全局变量/样式
@@ -23,3 +24,5 @@ export default {
     ]
   }
 }
+
+export default cssConf

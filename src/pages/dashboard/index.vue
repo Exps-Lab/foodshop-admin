@@ -5,7 +5,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { getHourTips } from '@utils/index'
   import { userStore } from '@store/user'
 

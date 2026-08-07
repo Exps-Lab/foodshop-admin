@@ -2,8 +2,16 @@ import { defineStore } from 'pinia'
 import { userStore } from '@store/user'
 import { asyncRouterMap, noAuthRouter } from '@router'
 import { getCommonInfo } from '@api/common/index'
+import type { AuthState } from './types'
+import type { MenuItem } from '@/api/types'
+import type { RouteRecordRaw } from 'vue-router'
 
-function routerFilter (feRouter, ServerRouter, res, deepLevel) {
+function routerFilter(
+  feRouter: RouteRecordRaw[],
+  ServerRouter: MenuItem[],
+  res: RouteRecordRaw[],
+  deepLevel: number
+): RouteRecordRaw[] {
   for (const serverItem of ServerRouter) {
     for (const feItem of feRouter) {
       if (serverItem.path === feItem.path) {
@@ -11,24 +19,24 @@ function routerFilter (feRouter, ServerRouter, res, deepLevel) {
           res.push(feItem)
         } else {
           const { children, ...data } = feItem
-          const tempData = { ...data }
+          const tempData = { ...data } as RouteRecordRaw
           deepLevel++
-          tempData.children = routerFilter(children, serverItem.children, [], deepLevel)
+          tempData.children = routerFilter(children as RouteRecordRaw[], serverItem.children, [], deepLevel)
           deepLevel--
           res.push(tempData)
         }
         break
-      } else if (serverItem.path.includes(feItem.path)) {
+      } else if (serverItem.path!.includes(feItem.path as string)) {
         if (deepLevel > 1) {
           res.push(feItem)
         } else {
           const fakeChildPath = [{
-            path: serverItem.path.slice(feItem.path.length + 1)
-          }]
+            path: serverItem.path!.slice((feItem.path as string).length + 1)
+          }] as unknown as MenuItem[]
           const { path, ...data } = feItem
-          const tempData = { ...data, path }
+          const tempData = { ...data, path } as RouteRecordRaw
           deepLevel++
-          tempData.children = routerFilter(feItem.children, fakeChildPath, [], deepLevel)
+          tempData.children = routerFilter(feItem.children as RouteRecordRaw[], fakeChildPath, [], deepLevel)
           deepLevel--
           res.push(tempData)
         }
@@ -40,26 +48,26 @@ function routerFilter (feRouter, ServerRouter, res, deepLevel) {
 }
 
 export const authStore = defineStore('auth', {
-  state: () => ({
+  state: (): AuthState => ({
     routes: [],
     menus: []
   }),
   actions: {
-    resetRoutes () {
+    resetRoutes() {
       this.routes = []
     },
-    generateRoutes() {
+    generateRoutes(): Promise<void> {
       const _userStore = userStore()
       return new Promise(resolve => {
         getCommonInfo().then(res => {
           const { menuList: apiRoutes, userInfo } = res.data
-          let accessedRouters = routerFilter(asyncRouterMap, apiRoutes, [], 1)
+          const accessedRouters = routerFilter(asyncRouterMap, apiRoutes, [], 1)
           this.routes = [...accessedRouters, noAuthRouter]
           this.menus = apiRoutes.filter(menu => !menu.is_hidden)
           _userStore.setUserInfo(userInfo)
           resolve()
         })
-      });
+      })
     }
   }
 })

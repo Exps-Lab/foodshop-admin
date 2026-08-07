@@ -47,20 +47,25 @@
   </div>
 </template>
 
-<script setup>
-  import { reactive } from 'vue';
-  import { useRouter } from "vue-router"
+<script setup lang="ts">
+  import { reactive } from 'vue'
+  import { useRouter } from 'vue-router'
   import { userStore } from '@store/user'
-  import { Message } from '@arco-design/web-vue';
+  import { Message } from '@arco-design/web-vue'
+
+  interface LoginForm {
+    username: string
+    password: string
+  }
 
   const router = useRouter()
   const store = userStore()
-  const userInfo = reactive({
+  const userInfo = reactive<LoginForm>({
     username: '',
     password: '',
   })
 
-  const handleSubmit = ({ values, errors }) => {
+  const handleSubmit = ({ values, errors }: { values: LoginForm; errors: any }) => {
     if (!errors) {
       store.login(values)
         .then(() => {

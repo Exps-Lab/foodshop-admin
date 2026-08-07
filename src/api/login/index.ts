@@ -1,6 +1,7 @@
 import request from '@utils/request'
+import type { LoginParams } from '../types'
 
-export function login (data) {
+export function login(data: LoginParams) {
   return request({
     url: '/admin/noauth/login',
     method: 'post',
@@ -8,7 +9,7 @@ export function login (data) {
   })
 }
 
-export function logout (data) {
+export function logout(data?: Record<string, any>) {
   return request({
     url: '/admin/noauth/logout',
     method: 'post',

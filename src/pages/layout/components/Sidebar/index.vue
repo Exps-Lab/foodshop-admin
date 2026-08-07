@@ -14,27 +14,34 @@
   </div>
 </template>
 
-<script setup>
-  import { ref, computed } from "vue"
-  import { useRouter } from "vue-router"
+<script setup lang="ts">
+  import { ref, computed } from 'vue'
+  import { useRouter } from 'vue-router'
   import Item from './Item.vue'
   import logo from './imgs/logo.png'
   import logoOnly from './imgs/logo-only.png'
 
-  const props = defineProps({
-    list: Array
-  })
+  interface MenuItem {
+    label: string
+    path: string
+    icon?: string
+    children?: MenuItem[]
+  }
+
+  defineProps<{
+    list?: MenuItem[]
+  }>()
+
   const router = useRouter()
-  const { list } = props
   const collapse = ref(false)
 
   const path = computed(() => router.currentRoute.value.path)
   const logoPath = computed(() => {
     return collapse.value ? logoOnly : logo
   })
-  const onCollapse = (val) => {
+  const onCollapse = (val: boolean) => {
     collapse.value = val
-    document.querySelector(".app-main").style.maxWidth = val ? 'calc(100vw - 50px - 48px)' : 'calc(100vw - 200px - 48px)'
+    document.querySelector('.app-main')!.style.maxWidth = val ? 'calc(100vw - 50px - 48px)' : 'calc(100vw - 200px - 48px)'
   }
 </script>
 

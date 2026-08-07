@@ -15,11 +15,23 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { reactive, onMounted } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { Message, Modal } from '@arco-design/web-vue'
   import { getCategory, deleteCategory } from '@api/goods'
+
+  interface CategoryItem {
+    id: number
+    name: string
+    description: string
+    foods_names: string[]
+  }
+  interface Query {
+    page_num: number
+    page_size: number
+    shop_id?: number | string
+  }
 
   const router = useRouter()
   const route = useRoute()
@@ -56,43 +68,44 @@
     current: 1,
     total: 0
   })
-  const state = reactive({
+  const state = reactive<{ data: CategoryItem[] }>({
     data: []
   })
 
   const getList = async () => {
-    let query = {
+    const query: Query = {
       page_num: pagination.current,
       page_size: pagination.pageSize
     }
     if (shopId) {
       query.shop_id = shopId
     }
-    let shopRes = await getCategory(query)
+    const shopRes = await getCategory(query)
     const { pageNum, list, total } = shopRes.data
     state.data = list
     pagination.total = total
     pagination.current = pageNum
   }
-  const handleView = (row) => {
+  const handleView = (row: CategoryItem) => {
     router.push(`/goods/index?food_category_id=${row.id}`)
   }
-  const handleDelete = (row) => {
+  const handleDelete = (row: CategoryItem) => {
     Modal.confirm({
       title: '确认要删除商品分类吗？',
+      content: '',
       onOk: () => {
         deleteCategory({ id: row.id })
           .then(() => {
             Message.success('删除成功！')
             getList()
           })
-          .catch(err => {
+          .catch((err: any) => {
             Message.error(err.data.msg)
           })
       }
     })
   }
-  const tableChange = (current) => {
+  const tableChange = (current: number) => {
     pagination.current = current
     getList()
   }

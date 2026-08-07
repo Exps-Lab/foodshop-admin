@@ -2,8 +2,7 @@
   <h1>userList page</h1>
 </template>
 
-<script setup>
-
+<script setup lang="ts">
 </script>
 
 <style lang="less" scoped>

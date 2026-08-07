@@ -1,5 +1,5 @@
 
-const getHourTips = () => {
+const getHourTips = (): string => {
   const hourNow = new Date().getHours()
   let tips = ''
   switch (hourNow) {

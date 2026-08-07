@@ -22,11 +22,21 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Message, Modal } from '@arco-design/web-vue'
 import { getCouponList, deleteCoupon } from '@api/coupon'
+
+interface CouponItem {
+  coupon_id: number
+  title: string
+  base_val: number
+  valid_start: string
+  valid_end: string
+  create_user: string
+  update_user: string
+}
 
 const router = useRouter()
 
@@ -75,7 +85,7 @@ const pagination = reactive({
   total: 0
 })
 
-const state = reactive({
+const state = reactive<{ data: CouponItem[] }>({
   data: []
 })
 
@@ -93,17 +103,18 @@ const handleAdd = () => {
   router.push('/coupon/detail')
 }
 
-const handleView = (row) => {
+const handleView = (row: CouponItem) => {
   router.push(`/coupon/detail?coupon_id=${row.coupon_id}&view=1`)
 }
 
-const handleEdit = (row) => {
+const handleEdit = (row: CouponItem) => {
   router.push(`/coupon/detail?coupon_id=${row.coupon_id}`)
 }
 
-const handleDelete = (row) => {
+const handleDelete = (row: CouponItem) => {
   Modal.confirm({
     title: '确认要删除该优惠券吗？',
+    content: '',
     onOk: () => {
       deleteCoupon({ coupon_id: row.coupon_id }).then(() => {
         Message.success('删除成功！')
@@ -113,7 +124,7 @@ const handleDelete = (row) => {
   })
 }
 
-const tableChange = (current) => {
+const tableChange = (current: number) => {
   pagination.current = current
   getList()
 }
