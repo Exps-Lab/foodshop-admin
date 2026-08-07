@@ -462,9 +462,9 @@
       if (item.id !== undefined && item.level === level) {
         const { sub_categories = [], ...rest } = item
         if (sub_categories.length) {
-          level++
+          level++;
           (rest as any).children = filterCategory(sub_categories, [], level)
-          level--
+          level--;
           res.push(rest)
         } else {
           res.push(item)
@@ -506,7 +506,6 @@
         title: typeConfig.title,
         content: '',
         okText: '确认',
-        okType: 'danger',
         onOk: doGenerate
       })
     } else {
